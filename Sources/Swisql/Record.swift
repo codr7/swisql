@@ -4,19 +4,19 @@ struct Field {
 }
 
 public class Record {
-    var fields: OrderedSet<Column, Field>
-
-    public init() {
-        fields = OrderedSet({(l: Column, r: Field) -> Order in
-                                let t = compare(ObjectIdentifier(l.table), ObjectIdentifier(r.column.table))
+    var fields = OrderedSet({(l: Column, r: Field) -> Order in
+                                let t = compare(ObjectIdentifier(l.table),
+                                                ObjectIdentifier(r.column.table))
                                 
                                 return if t == .equal {
-                                    compare(ObjectIdentifier(l), ObjectIdentifier(r.column))
+                                    compare(ObjectIdentifier(l),
+                                            ObjectIdentifier(r.column))
                                 } else {
                                     t
                                 }   
                             })
-    }
+
+    public init() {}
 
     public var count: Int {
         get { fields.count }
