@@ -1,7 +1,11 @@
 public class Table: Definition {
     var definitions: [TableDefinition] = []
     var columns: [Column] = []
-    var _primaryKey: Key?
+    lazy var primaryKey: Key = initPrimaryKey()
+
+    func initPrimaryKey() -> Key {
+        Key(self, "\(name)PrimaryKey", columns.filter {$0.primaryKey})
+    }
 
     public override var createSql: String {
         get {"\(super.createSql) ()"}
@@ -11,20 +15,9 @@ public class Table: Definition {
         get {"TABLE"}
     }
 
-    public var primaryKey: Key {
-        get {
-            if _primaryKey == nil {
-                _primaryKey = Key(self, "\(name)PrimaryKey",
-                                  columns.filter {$0.primaryKey})
-            }
-
-            return _primaryKey!
-        }
-    }
-
     public override func create(inTx tx: Tx) throws {
         try super.create(inTx: tx)
+        _ = primaryKey
         for d in definitions {try d.create(inTx: tx)}
-        if _primaryKey == nil {try primaryKey.create(inTx: tx)}
     }
 }

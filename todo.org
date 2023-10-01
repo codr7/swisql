@@ -1,1 +1,8 @@
+* use tuples instead of structs
+** ValueKey
+** Field
+* omit return in single expr funcs
+* omit repeated case in enums
+* use === instead of ObjectIdentity
+* convert Table.primaryKey to lazy var
 * add pg dep
