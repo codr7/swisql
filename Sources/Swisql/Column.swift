@@ -9,16 +9,29 @@ public class Column: TableDefinition {
         table.columns.append(self)
     }
 
-    public var sqlType: String {
+    public var columnType: String {
         get { fatalError("Not implemented") }
     }
+
+    public override var createSql: String {
+        get {
+            var sql = "\(super.createSql) \(columnType)"
+            if !nullable { sql += " NOT NULL" }
+            if primaryKey { sql += " PRIMARY KEY" }
+            return sql
+        }
+    }
+
+    public override var definitionType: String {
+        get {"COLUMN"}
+    }    
 }
 
 public class TypedColumn<T>: Column {
 }
 
 public class IntColumn: TypedColumn<Int> {
-    public override var sqlType: String {
+    public override var columnType: String {
         get { "INTEGER" }
     }
 }

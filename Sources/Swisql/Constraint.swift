@@ -5,4 +5,16 @@ public class Constraint: TableDefinition {
         self.columns = columns
         super.init(table, name)
     }
+
+    public var constraintType: String {
+        get {fatalError("Not implemented")}
+    }
+
+    public override var createSql: String {
+        get {"\(super.createSql) \(constraintType)"}
+    }
+
+    public override var definitionType: String {
+        get {"CONSTRAINT"}
+    }
 }
