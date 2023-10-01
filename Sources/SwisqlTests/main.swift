@@ -45,7 +45,7 @@ func recordTests() {
 
     let cx = Cx()
     let tx = cx.startTx()
-    try! tbl.create(in: tx)
+    try! tbl.create(inTx: tx)
     try! tx.rollback()
 }
 

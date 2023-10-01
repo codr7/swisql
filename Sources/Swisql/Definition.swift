@@ -9,11 +9,11 @@ public class Definition {
         get { "\"\(name)\"" }
     }
 
-    public func create(in tx: Tx) throws {
+    public func create(inTx tx: Tx) throws {
         fatalError("Not implemented")
     }
 
-    public func drop(in tx: Tx) throws {
+    public func drop(inTx tx: Tx) throws {
         fatalError("Not implemented")
     }
 }
