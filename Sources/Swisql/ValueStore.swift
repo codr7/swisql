@@ -14,9 +14,7 @@ struct ValueKey: Hashable {
 }
 
 func ==(l: ValueKey, r: ValueKey) -> Bool {
-    return
-      ObjectIdentifier(l.record) == ObjectIdentifier(r.record) &&
-      ObjectIdentifier(l.column) == ObjectIdentifier(r.column)
+    return l.record === r.record && l.column === r.column
 }
 
 public class ValueStore {
