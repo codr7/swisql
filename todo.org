@@ -1,3 +1,6 @@
+* finish tx
+** add commit
+*** copy values to cx
 * add column.create()
 * add key.create()
 * add pg dep

@@ -8,10 +8,10 @@ public class Record {
 
     public init() {
         fields = OrderedSet({(l: Column, r: Field) -> Order in
-                                let t = compare(l.table.name, r.column.table.name)
+                                let t = compare(ObjectIdentifier(l.table), ObjectIdentifier(r.column.table))
                                 
                                 return if t == .equal {
-                                    compare(l.name, r.column.name)
+                                    compare(ObjectIdentifier(l), ObjectIdentifier(r.column))
                                 } else {
                                     t
                                 }   
