@@ -7,7 +7,7 @@ public enum Order {
 public typealias Compare<L, R> = (L, R) -> Order
 
 public func compare<T: Comparable>(_ l: T, _ r: T) -> Order {
-    return if l < r {
+    if l < r {
         .less
     } else if l > r {
         .greater
@@ -93,6 +93,6 @@ public struct OrderedSet<K, V> {
 
 public extension OrderedSet where K == V {
     mutating func add(_ value: V) -> Bool {
-        return add(value, key: value)
+        add(value, key: value)
     }
 }
