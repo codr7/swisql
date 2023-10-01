@@ -6,18 +6,26 @@ public enum Order {
 
 public typealias Compare<L, R> = (L, R) -> Order
 
+public func compare<T: Comparable>(_ l: T, _ r: T) -> Order {
+    return if l < r {
+        .less
+    } else if l > r {
+        .greater
+    } else {
+        .equal
+    }
+}
+
 public struct OrderedSet<K, V> {
-    let compare: Compare<K, V>
+    public let compare: Compare<K, V>
     var items: [V] = []
 
-    public init(compare: @escaping Compare<K, V>) {
+    public init(_ compare: @escaping Compare<K, V>) {
         self.compare = compare
     }
 
     public var count: Int {
-        get {
-            return items.count
-        }
+        get { return items.count }
     }
 
     public subscript(key: K) -> V? {

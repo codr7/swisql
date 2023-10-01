@@ -13,9 +13,10 @@ func orderedSetTests() {
         return .equal
     }
 
-    var s = OrderedSet<Int, Int>(compare: compareInts)
+    var s = OrderedSet<Int, Int>(compare)
     
     assert(s.index(of: 42) == (0, nil))
+    
     assert(s.add(1))
     assert(!s.add(1))
     assert(s.add(3))
@@ -31,15 +32,18 @@ func orderedSetTests() {
 }
 
 func recordTests() {
-    let col = TypedColumn<Int>(name: "foo")
-    var rec = Record()
-
+    let tbl = Table("tbl")
+    let col = IntColumn(tbl, "col", primaryKey: true)
+    let rec = Record()
+    
     rec[col] = 42
     assert(rec[col]! == 42)
     assert(rec.count == 1)
 
     rec[col] = nil
     assert(rec.count == 0)
+
+    //try! tbl.create()
 }
 
 orderedSetTests()

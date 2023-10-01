@@ -3,13 +3,18 @@ struct Field {
     var value: Any
 }
 
-public struct Record {
+public class Record {
     var fields: OrderedSet<Column, Field>
 
     public init() {
-        fields = OrderedSet(compare: {
-                                (l: Column, r: Field) -> Order in
-                                return .equal
+        fields = OrderedSet({(l: Column, r: Field) -> Order in
+                                let t = compare(l.table.name, r.column.table.name)
+                                
+                                return if t == .equal {
+                                    compare(l.name, r.column.name)
+                                } else {
+                                    t
+                                }   
                             })
     }
 
