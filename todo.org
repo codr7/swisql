@@ -1,6 +1,5 @@
 * use tuples instead of structs
 ** ValueKey
 ** Field
-* omit repeated case in enums
 * use === instead of ObjectIdentity
 * add pg dep

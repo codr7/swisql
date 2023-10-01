@@ -1,7 +1,5 @@
 public enum Order {
-    case equal
-    case greater
-    case less
+    case equal, greater, less
 }
 
 public typealias Compare<L, R> = (L, R) -> Order
