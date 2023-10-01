@@ -1,4 +1,3 @@
-* finish table.create()
 * add column.create()
 * add key.create()
 * add pg dep

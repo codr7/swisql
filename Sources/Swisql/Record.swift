@@ -26,7 +26,7 @@ public class Record {
 
     public subscript<T>(column: TypedColumn<T>) -> T? {
         get {
-            if let f = self.fields[column] {
+            if let f = fields[column] {
                 return f.value as? T
             }
 
@@ -34,10 +34,14 @@ public class Record {
         }
         set(value) {
             if value == nil {
-                self.fields[column] = nil
+                fields[column] = nil
             } else {
-                self.fields[column] = Field(column: column, value: value!)
+                fields[column] = Field(column: column, value: value!)
             }
         }
+    }
+
+    public func store(in tx: Tx) throws {
+        fields.items.forEach {tx[self, $0.column] = $0.value}
     }
 }

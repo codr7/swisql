@@ -21,4 +21,9 @@ func ==(l: ValueKey, r: ValueKey) -> Bool {
 
 public class ValueStore {
     var storedValues: [ValueKey: Any] = [:]
+
+    public subscript(record: Record, column: Column) -> Any? {
+        get { storedValues[ValueKey(record, column)] }
+        set(value) { storedValues[ValueKey(record, column)] = value }
+    }
 }
