@@ -1,5 +1,11 @@
-* use tuples instead of structs
-** ValueKey
-** Field
-* use === instead of ObjectIdentity
 * add pg dep
+
+enum RepeatMode {
+  case times(Int)
+  case forever
+}
+
+extension RepeatMode {
+  static var once: Self { .times(1) }
+  static var never: Self { .times(0) }
+}
