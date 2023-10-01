@@ -16,6 +16,6 @@ public class Table: Definition {
 
     public override func create(inTx tx: Tx) throws {
         try tx.exec(sql: "CREATE TABLE \(sqlName) ()")
-        try definitions.forEach {try $0.create(inTx: tx)}
+        for d in definitions {try d.create(inTx: tx)}
     }
 }

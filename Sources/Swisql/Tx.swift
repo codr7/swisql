@@ -8,6 +8,12 @@ public class Tx: ValueStore {
     public func exec(sql: String, _ params: Any...) throws {
         print("\(sql)\n")
     }
+
+    public func commit() throws {
+        for (f, v) in self.storedValues {
+            cx[f.record, f.column] = v
+        }
+    }
     
     public func rollback() throws {
     }

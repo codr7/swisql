@@ -40,6 +40,6 @@ public class Record {
     }
 
     public func store(inTx tx: Tx) throws {
-        fields.items.forEach {tx[self, $0.column] = $0.value}
+        for f in fields.items {tx[self, f.column] = f.value}
     }
 }
