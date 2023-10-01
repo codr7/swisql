@@ -43,7 +43,10 @@ func recordTests() {
     rec[col] = nil
     assert(rec.count == 0)
 
-    //try! tbl.create()
+    let cx = Cx()
+    let tx = cx.startTx()
+    try! tbl.create(in: tx)
+    try! tx.rollback()
 }
 
 orderedSetTests()

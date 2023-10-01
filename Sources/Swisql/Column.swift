@@ -8,13 +8,17 @@ public class Column: TableDefinition {
         super.init(table, name)
         table.columns.append(self)
     }
+
+    public var sqlType: String {
+        get { fatalError("Not implemented") }
+    }
 }
 
 public class TypedColumn<T>: Column {
 }
 
 public class IntColumn: TypedColumn<Int> {
-    public var sqlType: String {
-        get { return "INTEGER" }
+    public override var sqlType: String {
+        get { "INTEGER" }
     }
 }

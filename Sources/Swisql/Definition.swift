@@ -5,6 +5,10 @@ public class Definition {
         self.name = name
     }
 
+    public var sqlName: String {
+        get { "\"\(name)\"" }
+    }
+
     public func create(in tx: Tx) throws {
         fatalError("Not implemented")
     }
