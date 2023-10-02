@@ -1,6 +1,7 @@
 public class Table: Definition {
     var definitions: [TableDefinition] = []
     var columns: [Column] = []
+    var foreignKeys: [ForeignKey] = []
     lazy var primaryKey: Key = initPrimaryKey()
 
     func initPrimaryKey() -> Key {

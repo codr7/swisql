@@ -2,10 +2,10 @@ public class Column: TableDefinition {
     public let nullable: Bool
     public let primaryKey: Bool
     
-    public init(_ table: Table, _ name: String, nullable: Bool = false, primaryKey: Bool = false) {
+    public init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         self.nullable = nullable
         self.primaryKey = primaryKey
-        super.init(table, name)
+        super.init(name, table)
         table.columns.append(self)
     }
 
@@ -24,7 +24,7 @@ public class Column: TableDefinition {
        "COLUMN"
     }
 
-    public func clone(_ table: Table, _ name: String) -> Column {
+    public func clone(_ name: String, _ table: Table) -> Column {
         fatalError("Not implemented")
     }
 }
@@ -37,8 +37,8 @@ public class BoolColumn: TypedColumn<Bool> {
         "BOOLEAN"
     }
 
-    public override func clone(_ table: Table, _ name: String) -> Column {
-        BoolColumn(table, name)
+    public override func clone(_ name: String, _ table: Table) -> Column {
+        BoolColumn(name, table)
     }
 }
 
@@ -47,8 +47,8 @@ public class IntColumn: TypedColumn<Int> {
         "INTEGER"
     }
 
-    public override func clone(_ table: Table, _ name: String) -> Column {
-        IntColumn(table, name)
+    public override func clone(_ name: String, _ table: Table) -> Column {
+        IntColumn(name, table)
     }
 }
 
@@ -57,7 +57,7 @@ public class StringColumn: TypedColumn<String> {
         "TEXT"
     }
 
-    public override func clone(_ table: Table, _ name: String) -> Column {
-        StringColumn(table, name)
+    public override func clone(_ name: String, _ table: Table) -> Column {
+        StringColumn(name, table)
     }
 }

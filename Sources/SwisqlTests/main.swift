@@ -33,7 +33,7 @@ func orderedSetTests() {
 
 func recordTests() {
     let tbl = Table("tbl")
-    let col = IntColumn(tbl, "col", primaryKey: true)
+    let col = IntColumn("col", tbl, primaryKey: true)
     let rec = Record()
     
     rec[col] = 42

@@ -11,7 +11,7 @@ public class Constraint: TableDefinition {
         }
         
         self.columns = columns
-        super.init(table, name)
+        super.init(name, table)
     }
 
     public var constraintType: String {
