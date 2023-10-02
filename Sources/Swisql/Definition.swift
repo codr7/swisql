@@ -1,31 +1,30 @@
-public class Definition {
+public protocol Definition {
+    var name: String {get}
+    var createSql: String {get}
+    var definitionType: String {get}
+    var dropSql: String {get}
+    var sqlName: String {get}
+    
+    func create(inTx tx: Tx) throws
+    func drop(inTx tx: Tx) throws
+}
+
+public class BasicDefinition {
     public let name: String
 
     public init(_ name: String) {
         self.name = name
     }
 
-    public var createSql: String {
-        "CREATE \(definitionType) \(sqlName)"
-    }
-    
-    public var definitionType: String {
-        fatalError("Not implemented")
-    }
-
-    public var dropSql: String {
-        "DROP \(definitionType) \(sqlName)"
-    }
-
     public var sqlName: String {
         "\"\(name)\""
     }
+}
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: createSql)
-    }
+public func createSql(_ d: Definition) -> String {
+    "CREATE \(d.definitionType) \(d.sqlName)"
+}
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: dropSql)
-    }
+public func dropSql(_ d: Definition) -> String {
+    "DROP \(d.definitionType) \(d.sqlName)"
 }

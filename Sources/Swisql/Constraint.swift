@@ -1,7 +1,12 @@
-public class Constraint: TableDefinition {
-    let columns: [Column]
+public protocol Constraint: TableDefinition {
+    var columns: [any Column] {get}
+    var constraintType: String {get}
+}
 
-    public init(_ name: String, _ columns: [Column]) {
+public class BasicConstraint: BasicTableDefinition {
+    public let columns: [any Column]
+
+    public init(_ name: String, _ columns: [any Column]) {
         let table = columns[0].table
 
         for c in columns[1...] {
@@ -13,16 +18,12 @@ public class Constraint: TableDefinition {
         self.columns = columns
         super.init(name, table)
     }
-
-    public var constraintType: String {
-        fatalError("Not implemented")
-    }
-
-    public override var createSql: String {
-        "\(super.createSql) \(constraintType) (\(columns.sql))"
-    }
-
-    public override var definitionType: String {
+    
+    public var definitionType: String {
         "CONSTRAINT"
     }
+}
+
+public func createSql(_ c: Constraint) -> String {
+    "\(createSql(c as TableDefinition)) \(c.constraintType) (\(c.columns.sql))"
 }

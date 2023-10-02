@@ -6,8 +6,7 @@ public class Record {
                                                 ObjectIdentifier(r.0.table))
                                 
                                 return if t == .equal {
-                                    compare(ObjectIdentifier(l),
-                                            ObjectIdentifier(r.0))
+                                    compare(l.id, r.0.id)
                                 } else {
                                     t
                                 }   
@@ -19,7 +18,7 @@ public class Record {
         fields.count
     }
 
-    public subscript<T, C: TypedColumn<T>>(column: C) -> T? {
+    public subscript<T, C>(column: C) -> T? where C:BasicColumn<T>, C: Column {
         get {
             if let f = fields[column] {
                 return f.1 as? T

@@ -1,7 +1,3 @@
-* change Column to protocol
-** implement in all concrete columns
-** move code to TypedColumn
-** rename TypedColumn to BasicColumn
 * add event sourcing support
 ** use pg triggers
 ** store all changes in events table
