@@ -19,7 +19,7 @@ public class Constraint: TableDefinition {
     }
 
     public override var createSql: String {
-        "\(super.createSql) \(constraintType)"
+        "\(super.createSql) \(constraintType) (\(columns.sql))"
     }
 
     public override var definitionType: String {

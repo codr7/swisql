@@ -1,8 +1,7 @@
-* add foreign key options
-** onUpdate/onDelete
-*** .cascade/restrict
-* add enum
-* add sequence
+* add date column
+* add event sourcing support
+* add enums
+* add sequences
 * add pg dep
 
 enum RepeatMode {

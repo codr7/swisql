@@ -2,11 +2,7 @@ public class Table: Definition {
     var definitions: [TableDefinition] = []
     var columns: [Column] = []
     var foreignKeys: [ForeignKey] = []
-    lazy var primaryKey: Key = initPrimaryKey()
-
-    func initPrimaryKey() -> Key {
-        Key("\(name)PrimaryKey", columns.filter {$0.primaryKey})
-    }
+    lazy var primaryKey: Key = Key("\(name)PrimaryKey", columns.filter {$0.primaryKey})
 
     public override var createSql: String {
         "\(super.createSql) ()"

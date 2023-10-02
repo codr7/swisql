@@ -1,7 +1,10 @@
 public class Cx: ValueStore {
     public override init() {}
+
+    public func close() throws {
+    }
     
-    public func startTx() -> Tx {
+    public func startTx() throws -> Tx {
         Tx(self)
     }
 }

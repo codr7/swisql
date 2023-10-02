@@ -1,5 +1,20 @@
 import Swisql
 
+func foreignKeyTests() {
+    let tbl1 = Table("tbl1")
+    let col1 = IntColumn("col", tbl1, primaryKey: true)
+
+    let tbl2 = Table("tbl2")
+    _ = ForeignKey("fkey", tbl2, [col1], primaryKey: true)
+    
+    let cx = Cx()
+    let tx = try! cx.startTx()
+    try! tbl1.create(inTx: tx)
+    try! tbl2.create(inTx: tx)
+    try! tx.rollback()
+    try! cx.close()
+}
+
 func orderedSetTests() {
     func compareInts(l: Int, r: Int) -> Order {
         if l < r {
@@ -44,10 +59,12 @@ func recordTests() {
     assert(rec.count == 0)
 
     let cx = Cx()
-    let tx = cx.startTx()
+    let tx = try! cx.startTx()
     try! tbl.create(inTx: tx)
     try! tx.rollback()
+    try! cx.close()
 }
 
+foreignKeyTests()
 orderedSetTests()
 recordTests()

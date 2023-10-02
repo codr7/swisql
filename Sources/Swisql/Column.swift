@@ -24,7 +24,7 @@ public class Column: TableDefinition {
        "COLUMN"
     }
 
-    public func clone(_ name: String, _ table: Table) -> Column {
+    public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         fatalError("Not implemented")
     }
 }
@@ -37,8 +37,8 @@ public class BoolColumn: TypedColumn<Bool> {
         "BOOLEAN"
     }
 
-    public override func clone(_ name: String, _ table: Table) -> Column {
-        BoolColumn(name, table)
+    public override func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
+        BoolColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 }
 
@@ -47,8 +47,8 @@ public class IntColumn: TypedColumn<Int> {
         "INTEGER"
     }
 
-    public override func clone(_ name: String, _ table: Table) -> Column {
-        IntColumn(name, table)
+    public override func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
+        IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 }
 
@@ -57,7 +57,13 @@ public class StringColumn: TypedColumn<String> {
         "TEXT"
     }
 
-    public override func clone(_ name: String, _ table: Table) -> Column {
-        StringColumn(name, table)
+    public override func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
+        StringColumn(name, table, nullable: nullable, primaryKey: primaryKey)
+    }
+}
+
+extension [Column] {
+    var sql: String {
+        self.map({$0.sqlName}).joined(separator: ", ")
     }
 }
