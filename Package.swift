@@ -27,7 +27,8 @@ let package = Package(
   targets: [
     .target(
       name: "Swisql",
-      dependencies: []),
+      dependencies: [
+      ]),
     
     .executableTarget(
       name: "SwisqlTests",
