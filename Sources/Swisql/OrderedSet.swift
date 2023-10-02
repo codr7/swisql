@@ -23,7 +23,7 @@ public struct OrderedSet<K, V> {
     }
 
     public var count: Int {
-        get { items.count }
+        items.count
     }
 
     public subscript(key: K) -> V? {

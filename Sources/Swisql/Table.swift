@@ -8,11 +8,11 @@ public class Table: Definition {
     }
 
     public override var createSql: String {
-        get {"\(super.createSql) ()"}
+        "\(super.createSql) ()"
     }
 
     public override var definitionType: String {
-        get {"TABLE"}
+        "TABLE"
     }
 
     public override func create(inTx tx: Tx) throws {

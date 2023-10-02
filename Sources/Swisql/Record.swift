@@ -16,7 +16,7 @@ public class Record {
     public init() {}
 
     public var count: Int {
-        get { fields.count }
+        fields.count
     }
 
     public subscript<T>(column: TypedColumn<T>) -> T? {

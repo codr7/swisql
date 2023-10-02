@@ -10,20 +10,18 @@ public class Column: TableDefinition {
     }
 
     public var columnType: String {
-        get { fatalError("Not implemented") }
+        fatalError("Not implemented")
     }
 
     public override var createSql: String {
-        get {
-            var sql = "\(super.createSql) \(columnType)"
-            if !nullable { sql += " NOT NULL" }
-            if primaryKey { sql += " PRIMARY KEY" }
-            return sql
-        }
+        var sql = "\(super.createSql) \(columnType)"
+        if !nullable { sql += " NOT NULL" }
+        if primaryKey { sql += " PRIMARY KEY" }
+        return sql
     }
 
     public override var definitionType: String {
-        get {"COLUMN"}
+       "COLUMN"
     }    
 }
 
@@ -32,6 +30,6 @@ public class TypedColumn<T>: Column {
 
 public class IntColumn: TypedColumn<Int> {
     public override var columnType: String {
-        get { "INTEGER" }
+        "INTEGER"
     }
 }

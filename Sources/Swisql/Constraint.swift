@@ -7,14 +7,14 @@ public class Constraint: TableDefinition {
     }
 
     public var constraintType: String {
-        get {fatalError("Not implemented")}
+        fatalError("Not implemented")
     }
 
     public override var createSql: String {
-        get {"\(super.createSql) \(constraintType)"}
+        "\(super.createSql) \(constraintType)"
     }
 
     public override var definitionType: String {
-        get {"CONSTRAINT"}
+        "CONSTRAINT"
     }
 }

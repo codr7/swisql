@@ -6,19 +6,19 @@ public class Definition {
     }
 
     public var createSql: String {
-        get {"CREATE \(definitionType) \(sqlName)"}
+        "CREATE \(definitionType) \(sqlName)"
     }
     
     public var definitionType: String {
-        get { fatalError("Not implemented") }
+        fatalError("Not implemented")
     }
 
     public var dropSql: String {
-        get {"DROP \(definitionType) \(sqlName)"}
+        "DROP \(definitionType) \(sqlName)"
     }
 
     public var sqlName: String {
-        get { "\"\(name)\"" }
+        "\"\(name)\""
     }
 
     public func create(inTx tx: Tx) throws {
