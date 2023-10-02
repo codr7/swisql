@@ -1,3 +1,5 @@
+import Foundation
+
 public class Column: TableDefinition {
     public let nullable: Bool
     public let primaryKey: Bool
@@ -42,7 +44,6 @@ public class BoolColumn: TypedColumn<Bool> {
     }
 }
 
-/*
 public class DateColumn: TypedColumn<Date> {
     public override var columnType: String {
         "TIMESTAMP"
@@ -51,7 +52,7 @@ public class DateColumn: TypedColumn<Date> {
     public override func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         DateColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-}*/
+}
 
 public class IntColumn: TypedColumn<Int> {
     public override var columnType: String {

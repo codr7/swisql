@@ -1,3 +1,4 @@
+import Foundation
 import Swisql
 
 func foreignKeyTests() {
@@ -48,15 +49,29 @@ func orderedSetTests() {
 
 func recordTests() {
     let tbl = Table("tbl")
-    let col = IntColumn("col", tbl, primaryKey: true)
+    let boolCol = BoolColumn("bool", tbl)
+    let dateCol = DateColumn("date", tbl)
+    let intCol = IntColumn("int", tbl, primaryKey: true)
+    let stringCol = StringColumn("string", tbl)
     let rec = Record()
     
-    rec[col] = 42
-    assert(rec[col]! == 42)
-    assert(rec.count == 1)
+    rec[boolCol] = true
+    assert(rec[boolCol]! == true)
 
-    rec[col] = nil
-    assert(rec.count == 0)
+    let now = Date.now
+    rec[dateCol] = now
+    assert(rec[dateCol]! == now)
+
+    rec[intCol] = 42
+    assert(rec[intCol]! == 42)
+
+    rec[stringCol] = "foo"
+    assert(rec[stringCol]! == "foo")
+    
+    assert(rec.count == 4)
+
+    rec[intCol] = nil
+    assert(rec.count == 3)
 
     let cx = Cx()
     let tx = try! cx.startTx()
