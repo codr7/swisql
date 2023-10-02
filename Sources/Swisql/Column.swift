@@ -28,8 +28,20 @@ public class Column: TableDefinition {
 public class TypedColumn<T>: Column {
 }
 
+public class BoolColumn: TypedColumn<Bool> {
+    public override var columnType: String {
+        "BOOLEAN"
+    }
+}
+
 public class IntColumn: TypedColumn<Int> {
     public override var columnType: String {
         "INTEGER"
+    }
+}
+
+public class StringColumn: TypedColumn<String> {
+    public override var columnType: String {
+        "TEXT"
     }
 }
