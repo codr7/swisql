@@ -1,5 +1,11 @@
-* add date column
+* rename Column to ColumnProtocol
+** implement in all concrete columns
+** update all references
+** move code to TypedColumn
+** rename TypedColumn to Column
 * add event sourcing support
+** use pg triggers
+** store all changes in events table
 * add enums
 * add sequences
 * add pg dep

@@ -19,7 +19,7 @@ public class Record {
         fields.count
     }
 
-    public subscript<T>(column: TypedColumn<T>) -> T? {
+    public subscript<T, C: TypedColumn<T>>(column: C) -> T? {
         get {
             if let f = fields[column] {
                 return f.1 as? T
