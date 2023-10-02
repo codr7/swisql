@@ -1,15 +1,19 @@
-public enum ForeignKeyAction: String {
-    case cascade = "CASCADE"
-    case restrict = "RESTRICT"
-}
-
 public class ForeignKey: BasicConstraint, Constraint {
+    public enum Action: String {
+        case cascade = "CASCADE"
+        case restrict = "RESTRICT"
+    }
+    
     let foreignTable: Table
     let foreignColumns: [any Column]
-
+    let onUpdate: Action
+    let onDelete: Action
+    
     public init(_ name: String, _ table: Table, _ foreignColumns: [any Column],
                 nullable: Bool = false, primaryKey: Bool = false,
-                onUpdate: ForeignKeyAction = .cascade, onDelete: ForeignKeyAction = .restrict) {
+                onUpdate: Action = .cascade, onDelete: Action = .restrict) {
+        self.onUpdate = onUpdate
+        self.onDelete = onDelete
         foreignTable = foreignColumns[0].table
         self.foreignColumns = foreignColumns
         var columns: [Column] = []
@@ -32,7 +36,8 @@ public class ForeignKey: BasicConstraint, Constraint {
     }
 
     public var createSql: String {
-        "\(Swisql.createSql(self)) REFERENCES \(foreignTable.sqlName) (\(foreignColumns.sql))"
+        "\(Swisql.createSql(self)) REFERENCES \(foreignTable.sqlName) (\(foreignColumns.sql)) " +
+          "ON UPDATE \(onUpdate.rawValue) ON DELETE \(onDelete.rawValue)"
     }
 
     public var dropSql: String {
