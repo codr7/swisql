@@ -4,7 +4,7 @@ public class Table: Definition {
     lazy var primaryKey: Key = initPrimaryKey()
 
     func initPrimaryKey() -> Key {
-        Key(self, "\(name)PrimaryKey", columns.filter {$0.primaryKey})
+        Key("\(name)PrimaryKey", columns.filter {$0.primaryKey})
     }
 
     public override var createSql: String {

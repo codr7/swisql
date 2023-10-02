@@ -1,4 +1,3 @@
-* add ForeignKey
 * add pg dep
 
 enum RepeatMode {

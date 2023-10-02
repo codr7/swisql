@@ -22,7 +22,11 @@ public class Column: TableDefinition {
 
     public override var definitionType: String {
        "COLUMN"
-    }    
+    }
+
+    public func clone(_ table: Table, _ name: String) -> Column {
+        fatalError("Not implemented")
+    }
 }
 
 public class TypedColumn<T>: Column {
@@ -32,16 +36,28 @@ public class BoolColumn: TypedColumn<Bool> {
     public override var columnType: String {
         "BOOLEAN"
     }
+
+    public override func clone(_ table: Table, _ name: String) -> Column {
+        BoolColumn(table, name)
+    }
 }
 
 public class IntColumn: TypedColumn<Int> {
     public override var columnType: String {
         "INTEGER"
     }
+
+    public override func clone(_ table: Table, _ name: String) -> Column {
+        IntColumn(table, name)
+    }
 }
 
 public class StringColumn: TypedColumn<String> {
     public override var columnType: String {
         "TEXT"
+    }
+
+    public override func clone(_ table: Table, _ name: String) -> Column {
+        StringColumn(table, name)
     }
 }
