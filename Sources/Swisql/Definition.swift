@@ -1,8 +1,6 @@
 public protocol Definition {
     var name: String {get}
-    var createSql: String {get}
     var definitionType: String {get}
-    var dropSql: String {get}
     var sqlName: String {get}
     
     func create(inTx tx: Tx) throws

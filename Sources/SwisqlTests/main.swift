@@ -47,10 +47,17 @@ func orderedSetTests() {
     assert(s[3] == 3)
 }
 
+enum TestEnum: String {
+    case foo = "foo"
+    case bar = "bar"
+    case baz = "baz"
+}
+
 func recordTests() {
     let tbl = Table("tbl")
     let boolCol = BoolColumn("bool", tbl)
     let dateCol = DateColumn("date", tbl)
+    let enumCol = EnumColumn<TestEnum>("enum", tbl)
     let intCol = IntColumn("int", tbl, primaryKey: true)
     let stringCol = StringColumn("string", tbl)
     let rec = Record()
@@ -62,16 +69,19 @@ func recordTests() {
     rec[dateCol] = now
     assert(rec[dateCol]! == now)
 
+    rec[enumCol] = .foo
+    assert(rec[enumCol]! == .foo)
+
     rec[intCol] = 42
     assert(rec[intCol]! == 42)
 
     rec[stringCol] = "foo"
     assert(rec[stringCol]! == "foo")
     
-    assert(rec.count == 4)
+    assert(rec.count == 5)
 
     rec[intCol] = nil
-    assert(rec.count == 3)
+    assert(rec.count == 4)
 
     let cx = Cx()
     let tx = try! cx.startTx()

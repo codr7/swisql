@@ -12,19 +12,11 @@ public class Key: BasicConstraint, Constraint {
         }
     }
 
-    public var createSql: String {
-        Swisql.createSql(self)
-    }
-
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: self.createSql)
+        try tx.exec(sql: createSql(self))
     }
     
     public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: self.dropSql)
+        try tx.exec(sql: dropSql(self))
     }   
 }

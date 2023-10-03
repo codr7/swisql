@@ -4,25 +4,21 @@ public class Table: BasicDefinition, Definition {
     var foreignKeys: [ForeignKey] = []
     lazy var primaryKey: Key = Key("\(name)PrimaryKey", columns.filter {$0.primaryKey})
 
-    public var createSql: String {
-        "\(Swisql.createSql(self)) ()"
-    }
-
-    public var definitionType: String {
+     public var definitionType: String {
         "TABLE"
     }
 
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: self.createSql)
+        try tx.exec(sql: createSql(self))
         _ = primaryKey
         for d in definitions {try d.create(inTx: tx)}
     }
 
     public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: self.dropSql)
+        try tx.exec(sql: dropSql(self))
     }
+}
+
+public func createSql(_ t: Table) -> String {
+    "\(createSql(t as Definition)) ()"
 }

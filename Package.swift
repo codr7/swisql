@@ -22,12 +22,14 @@ let package = Package(
   ],
 
   dependencies: [
+    .package(url: "https://github.com/vapor/postgres-nio.git", from: "1.14.0"),
   ],
   
   targets: [
     .target(
       name: "Swisql",
       dependencies: [
+        .product(name: "PostgresNIO", package: "postgres-nio"),
       ]),
     
     .executableTarget(

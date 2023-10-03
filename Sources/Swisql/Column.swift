@@ -45,24 +45,16 @@ public class BoolColumn: BasicColumn<Bool>, Column {
         "BOOLEAN"
     }
 
-    public var createSql: String {
-        Swisql.createSql(self)
-    }
-
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         BoolColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
     public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: self.createSql)
+        try tx.exec(sql: createSql(self))
     }
 
     public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: self.dropSql)
+        try tx.exec(sql: dropSql(self))
     }    
 }
 
@@ -77,25 +69,41 @@ public class DateColumn: BasicColumn<Date>, Column {
         "TIMESTAMP"
     }
 
-    public var createSql: String {
-        Swisql.createSql(self)
-    }
-
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         DateColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
     public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: self.createSql)
+        try tx.exec(sql: createSql(self))
     }
 
     public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: self.dropSql)
+        try tx.exec(sql: dropSql(self))
     }    
+}
+
+public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.RawValue == String {
+    public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
+        super.init(name, table, nullable: nullable, primaryKey: primaryKey)
+        table.definitions.append(self)
+        table.columns.append(self)
+    }
+
+    public var columnType: String {
+        String(describing: T.self)
+    }
+
+    public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
+        EnumColumn<T>(name, table, nullable: nullable, primaryKey: primaryKey)
+    }
+
+    public func create(inTx tx: Tx) throws {
+        try tx.exec(sql: createSql(self))
+    }
+
+    public func drop(inTx tx: Tx) throws {
+        try tx.exec(sql: dropSql(self))
+    }        
 }
 
 public class IntColumn: BasicColumn<Int>, Column {
@@ -109,24 +117,16 @@ public class IntColumn: BasicColumn<Int>, Column {
         "INTEGER"
     }
 
-    public var createSql: String {
-        Swisql.createSql(self)
-    }
-
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
     public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: self.createSql)
+        try tx.exec(sql: createSql(self))
     }
 
     public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: self.dropSql)
+        try tx.exec(sql: dropSql(self))
     }        
 }
 
