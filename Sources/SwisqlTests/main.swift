@@ -48,7 +48,7 @@ func orderedSetTests() {
     assert(s[3] == 3)
 }
 
-enum TestEnum: String {
+enum TestEnum: String, CaseIterable {
     case foo = "foo"
     case bar = "bar"
     case baz = "baz"

@@ -1,4 +1,3 @@
-* create enum alts in Enum.create
 * add Definition.sync
 ** create missing enum alts
 ** create missing table colums

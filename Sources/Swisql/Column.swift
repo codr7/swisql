@@ -87,7 +87,7 @@ public class DateColumn: BasicColumn<Date>, Column {
     }
 }
 
-public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.RawValue == String {
+public class EnumColumn<T>: BasicColumn<T>, Column where T: CaseIterable, T: RawRepresentable, T.RawValue == String {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
