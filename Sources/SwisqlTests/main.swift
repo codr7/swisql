@@ -1,19 +1,20 @@
 import Foundation
 import Swisql
 
-func foreignKeyTests() {
+func foreignKeyTests() async {
     let tbl1 = Table("tbl1")
     let col1 = IntColumn("col", tbl1, primaryKey: true)
-
+    
     let tbl2 = Table("tbl2")
     _ = ForeignKey("fkey", tbl2, [col1], primaryKey: true)
     
-    let cx = Cx()
-    let tx = try! cx.startTx()
-    try! tbl1.create(inTx: tx)
-    try! tbl2.create(inTx: tx)
-    try! tx.rollback()
-    try! cx.close()
+    let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
+    try! await cx.connect()
+    let tx = try! await cx.startTx()
+    try! await tbl1.create(inTx: tx)
+    try! await tbl2.create(inTx: tx)
+    try! await tx.rollback()
+    try! await cx.disconnect()
 }
 
 func orderedSetTests() {
@@ -53,7 +54,7 @@ enum TestEnum: String {
     case baz = "baz"
 }
 
-func recordTests() {
+func recordTests() async {
     let tbl = Table("tbl")
     let boolCol = BoolColumn("bool", tbl)
     let dateCol = DateColumn("date", tbl)
@@ -83,13 +84,14 @@ func recordTests() {
     rec[intCol] = nil
     assert(rec.count == 4)
 
-    let cx = Cx()
-    let tx = try! cx.startTx()
-    try! tbl.create(inTx: tx)
-    try! tx.rollback()
-    try! cx.close()
+    let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
+    try! await cx.connect()
+    let tx = try! await cx.startTx()
+    try! await tbl.create(inTx: tx)
+    try! await tx.rollback()
+    try! await cx.disconnect()
 }
 
-foreignKeyTests()
+await foreignKeyTests()
 orderedSetTests()
-recordTests()
+await recordTests()

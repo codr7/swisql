@@ -3,8 +3,8 @@ public protocol Definition {
     var definitionType: String {get}
     var sqlName: String {get}
     
-    func create(inTx tx: Tx) throws
-    func drop(inTx tx: Tx) throws
+    func create(inTx tx: Tx) async throws
+    func drop(inTx tx: Tx) async throws
 }
 
 public class BasicDefinition {

@@ -1,5 +1,4 @@
 * finish enums
-** add pg connection/exec
 ** define actual enum if not exists in EnumColumn.create
 *** add definition.exists() throws
 *** create alts separately

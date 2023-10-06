@@ -8,14 +8,14 @@ public class Table: BasicDefinition, Definition {
         "TABLE"
     }
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: createSql(self))
+    public func create(inTx tx: Tx) async throws {
+        try await tx.exec(createSql(self))
         _ = primaryKey
-        for d in definitions {try d.create(inTx: tx)}
+        for d in definitions {try await d.create(inTx: tx)}
     }
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: dropSql(self))
+    public func drop(inTx tx: Tx) async throws {
+        try await tx.exec(dropSql(self))
     }
 }
 

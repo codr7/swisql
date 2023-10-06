@@ -1,3 +1,5 @@
+import PostgresNIO
+
 public class Tx: ValueStore {
     let cx: Cx
 
@@ -5,16 +7,21 @@ public class Tx: ValueStore {
         self.cx = cx
     }
 
-    public func exec(sql: String, _ params: Any...) throws {
+    public func exec(_ sql: String) async throws {
         print("\(sql)\n")
+        try await cx.connection!.query(PostgresQuery(unsafeSQL: sql, binds: PostgresBindings()),
+                                       logger: cx.log)
     }
 
-    public func commit() throws {
+    public func commit() async throws {
+        try await exec("COMMIT")
+        
         for (f, v) in self.storedValues {
             cx[f.record, f.column] = v
         }
     }
     
-    public func rollback() throws {
+    public func rollback() async throws {
+        try await exec("ROLLBACK") 
     }
 }

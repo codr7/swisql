@@ -30,7 +30,6 @@ public class BasicColumn<T>: BasicTableDefinition {
 public func createSql(_ c: any Column) -> String {
     var sql = "\(createSql(c as TableDefinition)) \(c.columnType)"
     if !c.nullable { sql += " NOT NULL" }
-    if c.primaryKey { sql += " PRIMARY KEY" }
     return sql
 }
 
@@ -49,12 +48,12 @@ public class BoolColumn: BasicColumn<Bool>, Column {
         BoolColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: createSql(self))
+    public func create(inTx tx: Tx) async throws {
+        try await tx.exec(createSql(self))
     }
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: dropSql(self))
+    public func drop(inTx tx: Tx) async throws {
+        try await tx.exec(dropSql(self))
     }    
 }
 
@@ -73,12 +72,12 @@ public class DateColumn: BasicColumn<Date>, Column {
         DateColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: createSql(self))
+    public func create(inTx tx: Tx) async throws {
+        try await tx.exec(createSql(self))
     }
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: dropSql(self))
+    public func drop(inTx tx: Tx) async throws {
+        try await tx.exec(dropSql(self))
     }    
 }
 
@@ -97,12 +96,12 @@ public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.Raw
         EnumColumn<T>(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: createSql(self))
+    public func create(inTx tx: Tx) async throws {
+        try await tx.exec(createSql(self))
     }
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: dropSql(self))
+    public func drop(inTx tx: Tx) async throws {
+        try await tx.exec(dropSql(self))
     }        
 }
 
@@ -121,12 +120,12 @@ public class IntColumn: BasicColumn<Int>, Column {
         IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: createSql(self))
+    public func create(inTx tx: Tx) async throws {
+        try await tx.exec(createSql(self))
     }
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: dropSql(self))
+    public func drop(inTx tx: Tx) async throws {
+        try await tx.exec(dropSql(self))
     }        
 }
 
@@ -153,12 +152,12 @@ public class StringColumn: BasicColumn<String>, Column {
         StringColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
-    public func create(inTx tx: Tx) throws {
-        try tx.exec(sql: self.createSql)
+    public func create(inTx tx: Tx) async throws {
+        try await tx.exec(self.createSql)
     }
 
-    public func drop(inTx tx: Tx) throws {
-        try tx.exec(sql: self.dropSql)
+    public func drop(inTx tx: Tx) async throws {
+        try await tx.exec(self.dropSql)
     }        
 }
 
