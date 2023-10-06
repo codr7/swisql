@@ -1,7 +1,14 @@
-* finish enums
-** create enum alts
+* create enum alts in Enum.create
+* add Definition.sync
+** create missing enum alts
+** create missing table colums
 * add Table.insert/update/delete
+** add Condition
+** add Column ==
+** add TypedColumn ==
+* add Record ForeignKey subscript
 * add sequences
+* add Query
 * add event sourcing support
 ** use pg triggers
 ** store all changes in events table
