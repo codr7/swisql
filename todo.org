@@ -1,5 +1,3 @@
-* add queryValue
-** use in exists
 * finish enums
 ** create enum alts
 * add event sourcing support

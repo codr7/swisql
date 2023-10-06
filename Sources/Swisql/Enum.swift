@@ -16,17 +16,11 @@ public class Enum<T: RawRepresentable>: BasicDefinition, Definition where T.RawV
     }
 
     public func exists(inTx tx: Tx) async throws -> Bool {
-        let rows = try await tx.query("""
-                                        SELECT EXISTS (
-                                          SELECT FROM pg_type
-                                          WHERE typname  = \(sqlName)
-                                        )
-                                        """)
-
-        for try await (exists) in rows.decode((Bool).self) {
-            return exists
-        }
-
-        return false
+        try await tx.queryValue("""
+                                  SELECT EXISTS (
+                                    SELECT FROM pg_type
+                                    WHERE typname  = \(sqlName)
+                                  )
+                                  """)
     }    
 }

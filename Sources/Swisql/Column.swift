@@ -27,21 +27,15 @@ public class BasicColumn<T>: BasicTableDefinition {
     }
 
     public func exists(inTx tx: Tx) async throws -> Bool {
-        let rows = try await tx.query("""
-                                        SELECT EXISTS (
-                                          SELECT
-                                          FROM pg_attribute 
-                                          WHERE attrelid = \(table.sqlName)
-                                          AND attname = \(sqlName)
-                                          AND NOT attisdropped
-                                        )
-                                        """)
-        
-        for try await (exists) in rows.decode((Bool).self) {
-            return exists
-        }
-
-        return false
+        try await tx.queryValue("""
+                                  SELECT EXISTS (
+                                    SELECT
+                                    FROM pg_attribute 
+                                    WHERE attrelid = \(table.sqlName)
+                                    AND attname = \(sqlName)
+                                    AND NOT attisdropped
+                                  )
+                                  """)
     }
 }
 

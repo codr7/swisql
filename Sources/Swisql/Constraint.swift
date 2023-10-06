@@ -24,19 +24,13 @@ public class BasicConstraint: BasicTableDefinition {
     }
 
     public func exists(inTx tx: Tx) async throws -> Bool {
-        let rows = try await tx.query("""
-                                        SELECT EXISTS (
-                                          SELECT constraint_name 
-                                          FROM information_schema.constraint_column_usage 
-                                          WHERE table_name = \(table.sqlName)  and constraint_name = \(sqlName)
-                                        )
-                                        """)
-
-        for try await (exists) in rows.decode((Bool).self) {
-            return exists
-        }
-
-        return false
+        try await tx.queryValue("""
+                                  SELECT EXISTS (
+                                    SELECT constraint_name 
+                                    FROM information_schema.constraint_column_usage 
+                                    WHERE table_name = \(table.sqlName)  and constraint_name = \(sqlName)
+                                  )
+                                  """)
     }
 }
 
