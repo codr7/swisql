@@ -8,14 +8,18 @@ public class Table: BasicDefinition, Definition {
         "TABLE"
     }
 
+     public var createSql: String {
+         "\(Swisql.createSql(self)) ()"
+     }
+
+     public var dropSql: String {
+         Swisql.dropSql(self)
+     }
+
     public func create(inTx tx: Tx) async throws {
-        try await tx.exec(createSql(self))
+        try await tx.exec(createSql)
         _ = primaryKey
         for d in definitions {try await d.create(inTx: tx)}
-    }
-
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
     }
 
     public func exists(inTx tx: Tx) async throws -> Bool {
@@ -26,8 +30,4 @@ public class Table: BasicDefinition, Definition {
                                   )
                                   """)
     }
-}
-
-public func createSql(_ t: Table) -> String {
-    "\(createSql(t as Definition)) ()"
 }

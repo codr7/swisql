@@ -7,12 +7,12 @@ public class Enum<T: RawRepresentable>: BasicDefinition, Definition where T.RawV
             "TYPE"
     }
 
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec("\(createSql(self as Definition)) AS ENUM ()")
+    public var createSql: String {
+        "\(Swisql.createSql(self as Definition)) AS ENUM ()"
     }
     
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
+    public var dropSql: String {
+        Swisql.dropSql(self)
     }
 
     public func exists(inTx tx: Tx) async throws -> Bool {

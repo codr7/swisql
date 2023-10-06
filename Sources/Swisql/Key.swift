@@ -12,11 +12,11 @@ public class Key: BasicConstraint, Constraint {
         }
     }
 
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec(createSql(self))
+    public var createSql: String {
+        Swisql.createSql(self)
     }
     
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
+    public var dropSql: String {
+        Swisql.dropSql(self)
     }   
 }

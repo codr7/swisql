@@ -39,6 +39,16 @@ public class BasicColumn<T>: BasicTableDefinition {
     }
 }
 
+public extension Column {
+    var createSql: String {
+        Swisql.createSql(self)
+    }
+
+    var dropSql: String {
+        Swisql.dropSql(self)
+    }
+}
+
 public func createSql(_ c: any Column) -> String {
     var sql = "\(createSql(c as TableDefinition)) \(c.columnType)"
     if !c.nullable { sql += " NOT NULL" }
@@ -59,14 +69,6 @@ public class BoolColumn: BasicColumn<Bool>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         BoolColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec(createSql(self))
-    }
-
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
-    }    
 }
 
 public class DateColumn: BasicColumn<Date>, Column {
@@ -83,14 +85,6 @@ public class DateColumn: BasicColumn<Date>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         DateColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec(createSql(self))
-    }
-
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
-    }    
 }
 
 public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.RawValue == String {
@@ -115,12 +109,8 @@ public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.Raw
             try await type.create(inTx: tx)
         }
         
-        try await tx.exec(createSql(self))
+        try await tx.exec(self.createSql)
     }
-
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
-    }        
 }
 
 public class IntColumn: BasicColumn<Int>, Column {
@@ -137,14 +127,6 @@ public class IntColumn: BasicColumn<Int>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec(createSql(self))
-    }
-
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
-    }        
 }
 
 public class StringColumn: BasicColumn<String>, Column {
@@ -158,25 +140,9 @@ public class StringColumn: BasicColumn<String>, Column {
         "TEXT"
     }
 
-    public var createSql: String {
-        Swisql.createSql(self)
-    }
-
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
         StringColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec(self.createSql)
-    }
-
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(self.dropSql)
-    }        
 }
 
 extension [any Column] {

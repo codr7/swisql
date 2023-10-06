@@ -35,16 +35,12 @@ public class ForeignKey: BasicConstraint, Constraint {
         "FOREIGN KEY"
     }
 
-    public func create(inTx tx: Tx) async throws {
-        try await tx.exec(createSql(self))
+    public var createSql: String {
+        "\(Swisql.createSql(self)) REFERENCES \(foreignTable.sqlName) (\(foreignColumns.sql)) " +
+          "ON UPDATE \(onUpdate.rawValue) ON DELETE \(onDelete.rawValue)"
     }
-    
-    public func drop(inTx tx: Tx) async throws {
-        try await tx.exec(dropSql(self))
-    }    
-}
 
-public func createSql(_ k: ForeignKey) -> String {
-    "\(createSql(k as Constraint)) REFERENCES \(k.foreignTable.sqlName) (\(k.foreignColumns.sql)) " +
-      "ON UPDATE \(k.onUpdate.rawValue) ON DELETE \(k.onDelete.rawValue)"
+    public var dropSql: String {
+        Swisql.dropSql(self)
+    }
 }
