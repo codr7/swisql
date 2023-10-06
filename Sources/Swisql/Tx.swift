@@ -13,6 +13,12 @@ public class Tx: ValueStore {
                                        logger: cx.log)
     }
 
+    public func query(_ query: PostgresQuery) async throws -> PostgresRowSequence {
+        print("\(query.sql)\n")
+        return try await cx.connection!.query(query, logger: cx.log)
+    }
+
+    
     public func commit() async throws {
         try await exec("COMMIT")
         

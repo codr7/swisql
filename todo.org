@@ -1,7 +1,7 @@
+* add queryValue
+** use in exists
 * finish enums
-** define actual enum if not exists in EnumColumn.create
-*** add definition.exists() throws
-*** create alts separately
+** create enum alts
 * add event sourcing support
 ** use pg triggers
 ** store all changes in events table
@@ -17,3 +17,6 @@ extension RepeatMode {
   static var once: Self { .times(1) }
   static var never: Self { .times(0) }
 }
+
+sudo -u postgres psql
+/usr/pgadmin4/bin/pgadmin4 &

@@ -25,6 +25,24 @@ public class BasicColumn<T>: BasicTableDefinition {
     public var id: ObjectIdentifier {
         ObjectIdentifier(self)
     }
+
+    public func exists(inTx tx: Tx) async throws -> Bool {
+        let rows = try await tx.query("""
+                                        SELECT EXISTS (
+                                          SELECT
+                                          FROM pg_attribute 
+                                          WHERE attrelid = \(table.sqlName)
+                                          AND attname = \(sqlName)
+                                          AND NOT attisdropped
+                                        )
+                                        """)
+        
+        for try await (exists) in rows.decode((Bool).self) {
+            return exists
+        }
+
+        return false
+    }
 }
 
 public func createSql(_ c: any Column) -> String {
@@ -89,7 +107,7 @@ public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.Raw
     }
 
     public var columnType: String {
-        String(describing: T.self)
+        "\"\(String(describing: T.self))\""
     }
 
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
@@ -97,6 +115,12 @@ public class EnumColumn<T: RawRepresentable>: BasicColumn<T>, Column where T.Raw
     }
 
     public func create(inTx tx: Tx) async throws {
+        let type = Enum<T>()
+        
+        if !(try await type.exists(inTx: tx)) {
+            try await type.create(inTx: tx)
+        }
+        
         try await tx.exec(createSql(self))
     }
 
