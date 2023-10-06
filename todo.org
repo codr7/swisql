@@ -1,10 +1,10 @@
 * finish enums
 ** create enum alts
+* add Table.insert/update/delete
+* add sequences
 * add event sourcing support
 ** use pg triggers
 ** store all changes in events table
-* add sequences
-* add pg dep
 
 enum RepeatMode {
   case times(Int)
