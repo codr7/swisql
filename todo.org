@@ -1,5 +1,5 @@
 * add Definition.sync
-** create missing enum alts
+** create missing enum members
 ** create missing table colums
 * add Table.insert/update/delete
 ** add Condition

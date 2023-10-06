@@ -1,0 +1,2 @@
+## intro
+This project is the continuation of a life long crusade to simplify relational database access without submitting to the limitations of a full blown ORM; by modelling relational concepts rather than imposing object oriented thinking onto the database.
