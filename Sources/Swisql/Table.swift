@@ -31,7 +31,7 @@ public class Table: BasicDefinition, Definition {
         try await tx.queryValue("""
                                   SELECT EXISTS (
                                     SELECT FROM pg_tables
-                                    WHERE tablename  = \(sqlName)
+                                    WHERE tablename  = \(name)
                                   )
                                   """)
     }
@@ -41,7 +41,7 @@ public class Table: BasicDefinition, Definition {
 
         let sql = """
           INSERT INTO \(sqlName) (\(cvs.map({$0.0}).sql))
-          VALUES (\([String](repeating: "?", count: cvs.count).joined(separator: ", ")))
+          VALUES (\(cvs.map({$0.0.paramSql}).joined(separator: ", ")))
           """
 
         try await tx.exec(sql, cvs.map {$0.0.encode($0.1!)})
@@ -49,13 +49,13 @@ public class Table: BasicDefinition, Definition {
     }
 
     public func exists(_ rec: Record, inTx tx: Tx) -> Bool {
-        for c in primaryKey.columns {
-            if tx[rec, c] == nil {
-                return false
+        for c in columns {
+            if tx[rec, c] != nil {
+                return true
             }
         }
 
-        return true
+        return false
     }
     
     public func upsert(_ rec: Record, inTx tx: Tx) async throws {

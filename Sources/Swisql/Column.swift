@@ -5,6 +5,7 @@ public protocol Column: TableDefinition {
     var columnType: String {get}
     var id: ObjectIdentifier {get}
     var nullable: Bool {get}
+    var paramSql: String {get}
     var primaryKey: Bool {get}
     func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column
     func encode(_ value: Any) -> PostgresDynamicTypeEncodable
@@ -28,6 +29,10 @@ public class BasicColumn<T>: BasicTableDefinition {
         ObjectIdentifier(self)
     }
 
+    public var paramSql: String {
+        "?"
+    }
+
     public func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
         value as! PostgresDynamicTypeEncodable
     }
@@ -37,8 +42,8 @@ public class BasicColumn<T>: BasicTableDefinition {
                                   SELECT EXISTS (
                                     SELECT
                                     FROM pg_attribute 
-                                    WHERE attrelid = \(table.sqlName)
-                                    AND attname = \(sqlName)
+                                    WHERE attrelid = \(table.name)::regclass
+                                    AND attname = \(name)
                                     AND NOT attisdropped
                                   )
                                   """)
@@ -47,18 +52,14 @@ public class BasicColumn<T>: BasicTableDefinition {
 
 public extension Column {
     var createSql: String {
-        Swisql.createSql(self)
+        var sql = "\(Swisql.createSql(self as TableDefinition)) \(columnType)"
+        if !nullable { sql += " NOT NULL" }
+        return sql
     }
 
     var dropSql: String {
         Swisql.dropSql(self)
     }
-}
-
-public func createSql(_ c: any Column) -> String {
-    var sql = "\(createSql(c as TableDefinition)) \(c.columnType)"
-    if !c.nullable { sql += " NOT NULL" }
-    return sql
 }
 
 public class BoolColumn: BasicColumn<Bool>, Column {
@@ -93,8 +94,11 @@ public class DateColumn: BasicColumn<Date>, Column {
     }
 }
 
-public class EnumColumn<T>: BasicColumn<T>, Column where T: CaseIterable, T: RawRepresentable, T.RawValue == String {
+public class EnumColumn<T: BasicEnum>: BasicColumn<T>, Column where T.RawValue == String {
+    public let type: Enum<T>
+
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
+        type = Enum<T>(table.schema)
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
         table.columns.append(self)
@@ -104,13 +108,15 @@ public class EnumColumn<T>: BasicColumn<T>, Column where T: CaseIterable, T: Raw
         "\"\(String(describing: T.self))\""
     }
 
+    public override var paramSql: String {
+        "?::\(type.sqlName)"
+    }
+    
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
         EnumColumn<T>(name, table, nullable: nullable, primaryKey: primaryKey)
     }
 
     public func create(inTx tx: Tx) async throws {
-        let type = Enum<T>(schema)
-        
         if !(try await type.exists(inTx: tx)) {
             try await type.create(inTx: tx)
         }
@@ -120,6 +126,14 @@ public class EnumColumn<T>: BasicColumn<T>, Column where T: CaseIterable, T: Raw
 
     public override func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
         (value as! T).rawValue
+    }
+
+    public func sync(inTx tx: Tx) async throws {
+        try await type.sync(inTx: tx)
+
+        if !(try await exists(inTx: tx)) {
+            try await create(inTx: tx)
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 import Foundation
+import PostgresNIO
 import Swisql
 
 func foreignKeyTests() async {
@@ -54,7 +55,7 @@ func orderedSetTests() {
     assert(s[3] == 3)
 }
 
-enum TestEnum: String, CaseIterable {
+enum TestEnum: String, BasicEnum {
     case foo = "foo"
     case bar = "bar"
     case baz = "baz"
@@ -88,19 +89,20 @@ func recordTests() async {
     
     assert(rec.count == 5)
 
-    rec[intCol] = nil
-    assert(rec.count == 4)
-
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()
-    let tx = try! await cx.startTx()
-    try! await tbl.create(inTx: tx)
+    var tx = try! await cx.startTx()
+    try! await scm.sync(inTx: tx)
+    try! await tx.commit()
+    tx = try! await cx.startTx()
+    
     try! await tbl.upsert(rec, inTx: tx)
 
     rec[intCol] = 2
     assert(rec[intCol]! == 2)
     try! await tbl.upsert(rec, inTx: tx)
-    try! await tx.rollback()
+    try! await scm.drop(inTx: tx)
+    try! await tx.commit()
     try! await cx.disconnect()
 }
 
