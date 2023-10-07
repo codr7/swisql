@@ -8,7 +8,7 @@ Subscripting using typed columns accepts and returns the correct type:
 ```
 let scm = Schema()
 let tbl = Table(scm, "tbl")
-let col = IntColumn("col", tbl, primaryKey: true
+let col = IntColumn("col", tbl, primaryKey: true)
 let rec = Record()
 
 rec[intCol] = 42
