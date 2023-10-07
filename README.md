@@ -1,5 +1,5 @@
 ## intro
-This project aims to simplify working with PostgreSQL in Swift by modelling/integrating relational concepts rather than imposing an object oriented world view onto the database. The core concepts have previously been prototyped and verified in several languages, including [Common Lisp](https://github.com/codr7/cl-redb) and [Go](https://github.com/codr7/gstraps).
+This project aims to simplify working with PostgreSQL in Swift by modelling/integrating relational concepts rather than imposing an object oriented world view onto the database. The core concepts have previously been prototyped and verified in several other languages, including [Common Lisp](https://github.com/codr7/cl-redb) and [Go](https://github.com/codr7/gstraps).
 
 ## records
 Records are ordered sets of `Column`/`Any` tuples (aka. `Field`s).
