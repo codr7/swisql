@@ -80,8 +80,8 @@ func recordTests() async {
     rec[enumCol] = .foo
     assert(rec[enumCol]! == .foo)
 
-    rec[intCol] = 42
-    assert(rec[intCol]! == 42)
+    rec[intCol] = 1
+    assert(rec[intCol]! == 1)
 
     rec[stringCol] = "foo"
     assert(rec[stringCol]! == "foo")
@@ -95,6 +95,11 @@ func recordTests() async {
     try! await cx.connect()
     let tx = try! await cx.startTx()
     try! await tbl.create(inTx: tx)
+    try! await tbl.upsert(rec, inTx: tx)
+
+    rec[intCol] = 2
+    assert(rec[intCol]! == 2)
+    try! await tbl.upsert(rec, inTx: tx)
     try! await tx.rollback()
     try! await cx.disconnect()
 }

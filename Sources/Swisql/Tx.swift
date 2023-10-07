@@ -11,10 +11,12 @@ public class Tx: ValueStore {
         self.cx = cx
     }
 
-    public func exec(_ sql: String) async throws {
-        print("\(sql)\n")
-        try await cx.connection!.query(PostgresQuery(unsafeSQL: sql, binds: PostgresBindings()),
-                                       logger: cx.log)
+    public func exec(_ sql: String, _ params: [PostgresDynamicTypeEncodable] = []) async throws {
+        let psql = convertParams(sql)
+        print("\(psql)\n")
+        var bs = PostgresBindings()
+        for p in params { bs.append(p) }
+        try await cx.connection!.query(PostgresQuery(unsafeSQL: psql, binds: bs), logger: cx.log)
     }
 
     public func query(_ query: PostgresQuery) async throws -> PostgresRowSequence {
@@ -44,4 +46,17 @@ public class Tx: ValueStore {
     public func rollback() async throws {
         try await exec("ROLLBACK") 
     }
+}
+
+public func convertParams(_ sql: String) -> String {
+    let ss = sql.components(separatedBy: "?")
+    var result = ss[0]
+    var n = 1
+    
+    for s in ss[1...] {
+        result = result + "$\(n)" + s
+        n += 1
+    }
+
+    return result
 }

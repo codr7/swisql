@@ -1,4 +1,5 @@
 import Foundation
+import PostgresNIO
 
 public protocol Column: TableDefinition {
     var columnType: String {get}
@@ -6,6 +7,7 @@ public protocol Column: TableDefinition {
     var nullable: Bool {get}
     var primaryKey: Bool {get}
     func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column
+    func encode(_ value: Any) -> PostgresDynamicTypeEncodable
 }
 
 public class BasicColumn<T>: BasicTableDefinition {
@@ -26,6 +28,10 @@ public class BasicColumn<T>: BasicTableDefinition {
         ObjectIdentifier(self)
     }
 
+    public func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
+        value as! PostgresDynamicTypeEncodable
+    }
+    
     public func exists(inTx tx: Tx) async throws -> Bool {
         try await tx.queryValue("""
                                   SELECT EXISTS (
@@ -110,6 +116,10 @@ public class EnumColumn<T>: BasicColumn<T>, Column where T: CaseIterable, T: Raw
         }
         
         try await tx.exec(self.createSql)
+    }
+
+    public override func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
+        (value as! T).rawValue
     }
 }
 

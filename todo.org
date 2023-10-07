@@ -1,7 +1,5 @@
-* add Table.insert/update/delete
-** add Condition
-** add Column ==
-** add TypedColumn ==
+* fix Enum insert
+* implement Table.update
 * add Record ForeignKey subscript
 * add sequences
 * add Query

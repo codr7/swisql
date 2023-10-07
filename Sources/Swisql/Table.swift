@@ -36,6 +36,36 @@ public class Table: BasicDefinition, Definition {
                                   """)
     }
 
+    public func insert(_ rec: Record, inTx tx: Tx) async throws {
+        let cvs = columns.map({($0, rec[$0])}).filter({$0.1 != nil})
+
+        let sql = """
+          INSERT INTO \(sqlName) (\(cvs.map({$0.0}).sql))
+          VALUES (\([String](repeating: "?", count: cvs.count).joined(separator: ", ")))
+          """
+
+        try await tx.exec(sql, cvs.map {$0.0.encode($0.1!)})
+        for cv in cvs {tx[rec, cv.0] = cv.1}
+    }
+
+    public func exists(_ rec: Record, inTx tx: Tx) -> Bool {
+        for c in primaryKey.columns {
+            if tx[rec, c] == nil {
+                return false
+            }
+        }
+
+        return true
+    }
+    
+    public func upsert(_ rec: Record, inTx tx: Tx) async throws {
+        if exists(rec, inTx: tx) {
+            //try await table.update(rec, inTx: tx)
+        } else {
+            try await insert(rec, inTx: tx)
+        }
+    }    
+
     public func sync(inTx tx: Tx) async throws {
         if (try await exists(inTx: tx)) {
             for d in definitions {
