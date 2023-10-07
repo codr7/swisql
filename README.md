@@ -16,7 +16,7 @@ assert(rec[intCol]! == 42)
 ```
 
 ## enums
-PostgreSQL enums require `String` raw values and implementing the Enum protocol:
+PostgreSQL enums require `String` raw values and implementing the `Enum` protocol:
 
 ```
 enum TestEnum: String, Enum {
