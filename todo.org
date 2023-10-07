@@ -1,6 +1,3 @@
-* add Definition.sync
-** create missing enum members
-** create missing table colums
 * add Table.insert/update/delete
 ** add Condition
 ** add Column ==

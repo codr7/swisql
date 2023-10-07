@@ -30,4 +30,14 @@ public class Table: BasicDefinition, Definition {
                                   )
                                   """)
     }
+
+    public func sync(inTx tx: Tx) async throws {
+        if (try await exists(inTx: tx)) {
+            for d in definitions {
+                try await d.sync(inTx: tx)
+            }
+        } else {
+            try await create(inTx: tx)
+        }
+    }
 }

@@ -7,6 +7,7 @@ public protocol Definition {
     
     func create(inTx: Tx) async throws
     func drop(inTx: Tx) async throws
+    func sync(inTx: Tx) async throws
     func exists(inTx: Tx) async throws -> Bool
 }
 
@@ -17,7 +18,13 @@ public extension Definition {
 
     func drop(inTx tx: Tx) async throws {
         try await tx.exec(self.dropSql)
-    }    
+    }
+
+    func sync(inTx tx: Tx) async throws {
+        if !(try await exists(inTx: tx)) {
+            try await create(inTx: tx)
+        }
+    }
 }
 
 public class BasicDefinition {

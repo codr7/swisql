@@ -10,10 +10,17 @@ func foreignKeyTests() async {
     
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()
-    let tx = try! await cx.startTx()
+
+    var tx = try! await cx.startTx()
     try! await tbl1.create(inTx: tx)
     try! await tbl2.create(inTx: tx)
     try! await tx.rollback()
+
+    tx = try! await cx.startTx()
+    try! await tbl1.sync(inTx: tx)
+    try! await tbl2.sync(inTx: tx)
+    try! await tx.rollback()
+    
     try! await cx.disconnect()
 }
 

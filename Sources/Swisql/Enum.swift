@@ -3,12 +3,16 @@ public class Enum<T>: BasicDefinition, Definition where T: CaseIterable, T: RawR
         super.init(String(describing: T.self))
     }
     
+    public var createSql: String {
+        "\(Swisql.createSql(self as Definition)) AS ENUM ()"
+    }
+
     public var definitionType: String {
             "TYPE"
     }
 
-    public var createSql: String {
-        "\(Swisql.createSql(self as Definition)) AS ENUM ()"
+    public var dropSql: String {
+        Swisql.dropSql(self)
     }
 
     public func create(inTx tx: Tx) async throws {
@@ -19,10 +23,6 @@ public class Enum<T>: BasicDefinition, Definition where T: CaseIterable, T: RawR
         }
     }
 
-    public var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
     public func exists(inTx tx: Tx) async throws -> Bool {
         try await tx.queryValue("""
                                   SELECT EXISTS (
@@ -31,6 +31,16 @@ public class Enum<T>: BasicDefinition, Definition where T: CaseIterable, T: RawR
                                   )
                                   """)
     }    
+
+    public func sync(inTx tx: Tx) async throws {
+        if (try await exists(inTx: tx)) {
+            for m in T.allCases {
+                try await EnumMember(self, m.rawValue).sync(inTx: tx)
+            }
+        } else {
+            try await create(inTx: tx)
+        }
+    }
 }
 
 public class EnumMember<T>: BasicDefinition, Definition where T: CaseIterable, T: RawRepresentable, T.RawValue == String {
