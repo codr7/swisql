@@ -2,23 +2,22 @@ import Foundation
 import Swisql
 
 func foreignKeyTests() async {
-    let tbl1 = Table("tbl1")
+    let scm = Schema()
+    let tbl1 = Table(scm, "tbl1")
     let col1 = IntColumn("col", tbl1, primaryKey: true)
     
-    let tbl2 = Table("tbl2")
+    let tbl2 = Table(scm, "tbl2")
     _ = ForeignKey("fkey", tbl2, [col1], primaryKey: true)
     
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()
 
     var tx = try! await cx.startTx()
-    try! await tbl1.create(inTx: tx)
-    try! await tbl2.create(inTx: tx)
+    try! await scm.create(inTx: tx)
     try! await tx.rollback()
 
     tx = try! await cx.startTx()
-    try! await tbl1.sync(inTx: tx)
-    try! await tbl2.sync(inTx: tx)
+    try! await scm.sync(inTx: tx)
     try! await tx.rollback()
     
     try! await cx.disconnect()
@@ -62,7 +61,8 @@ enum TestEnum: String, CaseIterable {
 }
 
 func recordTests() async {
-    let tbl = Table("tbl")
+    let scm = Schema()
+    let tbl = Table(scm, "tbl")
     let boolCol = BoolColumn("bool", tbl)
     let dateCol = DateColumn("date", tbl)
     let enumCol = EnumColumn<TestEnum>("enum", tbl)

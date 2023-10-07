@@ -1,6 +1,6 @@
 public class Enum<T>: BasicDefinition, Definition where T: CaseIterable, T: RawRepresentable, T.RawValue == String {
-    public init() {
-        super.init(String(describing: T.self))
+    public init(_ schema: Schema) {
+        super.init(schema, String(describing: T.self))
     }
     
     public var createSql: String {
@@ -48,7 +48,7 @@ public class EnumMember<T>: BasicDefinition, Definition where T: CaseIterable, T
     
     public init(_ type: Enum<T>, _ name: String) {
         self.type = type
-        super.init(name)
+        super.init(type.schema, name)
     }
 
     public var definitionType: String {

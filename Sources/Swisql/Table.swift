@@ -4,6 +4,11 @@ public class Table: BasicDefinition, Definition {
     var foreignKeys: [ForeignKey] = []
     lazy var primaryKey: Key = Key("\(name)PrimaryKey", columns.filter {$0.primaryKey})
 
+    public override init(_ schema: Schema, _ name: String) {
+        super.init(schema, name)
+        schema.definitions.append(self)
+    }
+    
      public var definitionType: String {
         "TABLE"
     }

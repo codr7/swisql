@@ -7,7 +7,7 @@ public class BasicTableDefinition: BasicDefinition {
 
     public init(_ name: String, _ table: Table) {
         self.table = table
-        super.init(name)
+        super.init(table.schema, name)
     }
 }
 

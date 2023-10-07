@@ -3,6 +3,7 @@ public protocol Definition {
     var definitionType: String {get}
     var dropSql: String {get}
     var name: String {get}
+    var schema: Schema {get}
     var sqlName: String {get}
     
     func create(inTx: Tx) async throws
@@ -29,8 +30,10 @@ public extension Definition {
 
 public class BasicDefinition {
     public let name: String
-
-    public init(_ name: String) {
+    public let schema: Schema
+    
+    public init(_ schema: Schema, _ name: String) {
+        self.schema = schema
         self.name = name
     }
 

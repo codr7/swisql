@@ -103,7 +103,7 @@ public class EnumColumn<T>: BasicColumn<T>, Column where T: CaseIterable, T: Raw
     }
 
     public func create(inTx tx: Tx) async throws {
-        let type = Enum<T>()
+        let type = Enum<T>(schema)
         
         if !(try await type.exists(inTx: tx)) {
             try await type.create(inTx: tx)
