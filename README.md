@@ -23,7 +23,6 @@ enum TestEnum: String, Enum {
     case foo = "foo"
     case bar = "bar"
     case baz = "baz"
-
 }
 
 let scm = Schema()
