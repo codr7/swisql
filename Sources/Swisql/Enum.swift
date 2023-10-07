@@ -1,9 +1,9 @@
 import PostgresNIO
 
-public protocol BasicEnum: CaseIterable, RawRepresentable {
+public protocol Enum: CaseIterable, RawRepresentable where RawValue == String {
 }
 
-public class Enum<T: BasicEnum>: BasicDefinition, Definition where T.RawValue == String {
+public class EnumType<T: Enum>: BasicDefinition, Definition {
     public init(_ schema: Schema) {
         super.init(schema, String(describing: T.self))
     }
@@ -48,10 +48,10 @@ public class Enum<T: BasicEnum>: BasicDefinition, Definition where T.RawValue ==
     }
 }
 
-public class EnumMember<T: BasicEnum>: BasicDefinition, Definition where T.RawValue == String {
-    let type: Enum<T>
+public class EnumMember<T: Enum>: BasicDefinition, Definition {
+    let type: EnumType<T>
     
-    public init(_ type: Enum<T>, _ name: String) {
+    public init(_ type: EnumType<T>, _ name: String) {
         self.type = type
         super.init(type.schema, name)
     }

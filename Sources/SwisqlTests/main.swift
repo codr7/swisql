@@ -55,7 +55,7 @@ func orderedSetTests() {
     assert(s[3] == 3)
 }
 
-enum TestEnum: String, BasicEnum {
+enum TestEnum: String, Enum {
     case foo = "foo"
     case bar = "bar"
     case baz = "baz"

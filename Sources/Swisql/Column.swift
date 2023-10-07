@@ -94,11 +94,11 @@ public class DateColumn: BasicColumn<Date>, Column {
     }
 }
 
-public class EnumColumn<T: BasicEnum>: BasicColumn<T>, Column where T.RawValue == String {
-    public let type: Enum<T>
+public class EnumColumn<T: Enum>: BasicColumn<T>, Column where T.RawValue == String {
+    public let type: EnumType<T>
 
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
-        type = Enum<T>(table.schema)
+        type = EnumType<T>(table.schema)
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
         table.columns.append(self)

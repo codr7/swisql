@@ -1,7 +1,3 @@
-* fix Enum insert
-** figure out why int isn't stored
-* rename Enum to EnumDefinition
-** rename BasicEnum to Enum
 * implement Table.update
 * add Record ForeignKey subscript
 * add sequences
