@@ -53,7 +53,7 @@ public class BasicColumn<T>: BasicTableDefinition {
 public extension Column {
     var createSql: String {
         var sql = "\(Swisql.createSql(self as TableDefinition)) \(columnType)"
-        if !nullable { sql += " NOT NULL" }
+        if primaryKey || !nullable { sql += " NOT NULL" }
         return sql
     }
 
