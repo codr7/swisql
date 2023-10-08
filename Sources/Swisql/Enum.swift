@@ -1,6 +1,6 @@
 import PostgresNIO
 
-public protocol Enum: CaseIterable, RawRepresentable where RawValue == String {
+public protocol Enum: CaseIterable, Equatable, RawRepresentable where RawValue == String {
 }
 
 public class EnumType<T: Enum>: BasicDefinition, Definition {

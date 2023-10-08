@@ -88,18 +88,23 @@ func recordTests() async {
     assert(rec[stringCol]! == "foo")
     
     assert(rec.count == 5)
-
+    
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()
     var tx = try! await cx.startTx()
     try! await scm.sync(inTx: tx)
     try! await tx.commit()
     tx = try! await cx.startTx()
-    
+
+    assert(!rec.stored(tbl.columns, inTx: tx))
+    assert(rec.modified(tbl.columns, inTx: tx))
     try! await tbl.upsert(rec, inTx: tx)
+    assert(rec.stored(tbl.columns, inTx: tx))
+    assert(!rec.modified(tbl.columns, inTx: tx))
 
     rec[intCol] = 2
     assert(rec[intCol]! == 2)
+    assert(rec.modified(tbl.columns, inTx: tx))
     try! await tbl.upsert(rec, inTx: tx)
     try! await scm.drop(inTx: tx)
     try! await tx.commit()

@@ -53,4 +53,25 @@ public class Record {
             }
         }
     }
+
+    public func modified(_ columns: [Column], inTx tx: Tx) -> Bool {
+        for c in columns {
+            let l = self[c]
+            let r = tx[self, c]
+            if l == nil && r == nil  { continue }
+            if l == nil || r == nil || !c.equal(l!, r!) { return true }
+        }
+
+        return false
+    }
+
+    public func stored(_ columns: [Column], inTx tx: Tx) -> Bool {
+        for c in columns {
+            if tx[self, c] != nil {
+                return true
+            }
+        }
+
+        return false
+    }
 }

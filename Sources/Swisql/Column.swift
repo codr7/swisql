@@ -9,9 +9,10 @@ public protocol Column: TableDefinition {
     var primaryKey: Bool {get}
     func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column
     func encode(_ value: Any) -> PostgresDynamicTypeEncodable
+    func equal(_ left: Any, _ right: Any) -> Bool
 }
 
-public class BasicColumn<T>: BasicTableDefinition {
+public class BasicColumn<T: Equatable>: BasicTableDefinition {
     public let nullable: Bool
     public let primaryKey: Bool
     
@@ -35,6 +36,10 @@ public class BasicColumn<T>: BasicTableDefinition {
 
     public func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
         value as! PostgresDynamicTypeEncodable
+    }
+
+    public func equal(_ left: Any, _ right: Any) -> Bool {
+        return left as! T == right as! T
     }
     
     public func exists(inTx tx: Tx) async throws -> Bool {
@@ -66,7 +71,7 @@ public class BoolColumn: BasicColumn<Bool>, Column {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
-        table.columns.append(self)
+        table._columns.append(self)
     }
     
     public var columnType: String {
@@ -82,7 +87,7 @@ public class DateColumn: BasicColumn<Date>, Column {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
-        table.columns.append(self)
+        table._columns.append(self)
     }
 
     public var columnType: String {
@@ -101,7 +106,7 @@ public class EnumColumn<T: Enum>: BasicColumn<T>, Column where T.RawValue == Str
         type = EnumType<T>(table.schema)
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
-        table.columns.append(self)
+        table._columns.append(self)
     }
 
     public var columnType: String {
@@ -141,7 +146,7 @@ public class IntColumn: BasicColumn<Int>, Column {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
-        table.columns.append(self)
+        table._columns.append(self)
     }
 
     public var columnType: String {
@@ -157,7 +162,7 @@ public class StringColumn: BasicColumn<String>, Column {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
         table.definitions.append(self)
-        table.columns.append(self)
+        table._columns.append(self)
     }
 
     public var columnType: String {

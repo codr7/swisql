@@ -1,9 +1,10 @@
 public class Table: BasicDefinition, Definition {
     var definitions: [any TableDefinition] = []
-    var columns: [any Column] = []
+    var _columns: [any Column] = []
+    public var columns: [Column] { _columns }
     var foreignKeys: [ForeignKey] = []
-    lazy var primaryKey: Key = Key("\(name)PrimaryKey", columns.filter {$0.primaryKey})
-
+    lazy var primaryKey: Key = Key("\(name)PrimaryKey", _columns.filter {$0.primaryKey})
+    
     public override init(_ schema: Schema, _ name: String) {
         super.init(schema, name)
         schema.definitions.append(self)
@@ -37,7 +38,7 @@ public class Table: BasicDefinition, Definition {
     }
 
     public func insert(_ rec: Record, inTx tx: Tx) async throws {
-        let cvs = columns.map({($0, rec[$0])}).filter({$0.1 != nil})
+        let cvs = _columns.map({($0, rec[$0])}).filter({$0.1 != nil})
 
         let sql = """
           INSERT INTO \(sqlName) (\(cvs.map({$0.0}).sql))
@@ -48,18 +49,8 @@ public class Table: BasicDefinition, Definition {
         for cv in cvs {tx[rec, cv.0] = cv.1}
     }
 
-    public func exists(_ rec: Record, inTx tx: Tx) -> Bool {
-        for c in columns {
-            if tx[rec, c] != nil {
-                return true
-            }
-        }
-
-        return false
-    }
-    
     public func upsert(_ rec: Record, inTx tx: Tx) async throws {
-        if exists(rec, inTx: tx) {
+        if rec.stored(_columns, inTx: tx) {
             //try await table.update(rec, inTx: tx)
         } else {
             try await insert(rec, inTx: tx)
