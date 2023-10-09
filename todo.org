@@ -1,4 +1,9 @@
-* add queries
+* finish Query
+** add sources
+** add SqlSource
+*** implement for Table
+** add result functionality
+*** fetch(inout record)
 * add Record ForeignKey subscript
 * add indexes
 * add sequences

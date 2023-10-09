@@ -61,11 +61,11 @@ public class EnumMember<T: Enum>: BasicDefinition, Definition {
     }
           
     public var createSql: String {
-        "ALTER TYPE \(type.sqlName) ADD VALUE '\(name)'"
+        "ALTER TYPE \(type.nameSql) ADD VALUE '\(name)'"
     }
     
     public var dropSql: String {
-        "ALTER TYPE \(type.sqlName) DROP VALUE '\(name)'"
+        "ALTER TYPE \(type.nameSql) DROP VALUE '\(name)'"
     }
 
     public func exists(inTx tx: Tx) async throws -> Bool {

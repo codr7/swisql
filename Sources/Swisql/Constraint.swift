@@ -28,7 +28,7 @@ public class BasicConstraint: BasicTableDefinition {
                                   SELECT EXISTS (
                                     SELECT constraint_name 
                                     FROM information_schema.constraint_column_usage 
-                                    WHERE table_name = \(table.sqlName)  and constraint_name = \(sqlName)
+                                    WHERE table_name = \(table.nameSql)  and constraint_name = \(nameSql)
                                   )
                                   """)
     }

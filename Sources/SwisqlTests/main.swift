@@ -8,7 +8,7 @@ func conditionTests() {
     let col = StringColumn("col", tbl)
 
     let c = (col == "foo") || (col == "bar")
-    assert(c.sql == "(\(col.sqlName) = ?) OR (\(col.sqlName) = ?)")
+    assert(c.sql == "(\(col.valueSql) = ?) OR (\(col.valueSql) = ?)")
 }
 
 func foreignKeyTests() async {
@@ -62,6 +62,23 @@ func orderedSetTests() {
     assert(s[1] == 1)
     assert(s[2] == nil)
     assert(s[3] == 3)
+}
+
+func queryTests() async {
+    let scm = Schema()
+    let tbl = Table(scm, "tbl")
+    let col1 = StringColumn("col1", tbl, primaryKey: true)
+    let col2 = StringColumn("col2", tbl)
+
+    let q = Query()
+    q.select(col1, col2)
+    q.filter(col1 == "foo")
+    let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
+    try! await cx.connect()
+    let tx = try! await cx.startTx()
+    try! await scm.sync(inTx: tx)
+    try! await q.exec(inTx: tx)
+    try! await cx.disconnect()
 }
 
 enum TestEnum: String, Enum {
@@ -126,4 +143,5 @@ func recordTests() async {
 conditionTests()
 await foreignKeyTests()
 orderedSetTests()
+await queryTests()
 await recordTests()

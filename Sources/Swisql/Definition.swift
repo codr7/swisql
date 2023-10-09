@@ -4,7 +4,7 @@ public protocol Definition {
     var dropSql: String {get}
     var name: String {get}
     var schema: Schema {get}
-    var sqlName: String {get}
+    var nameSql: String {get}
     
     func create(inTx: Tx) async throws
     func drop(inTx: Tx) async throws
@@ -37,15 +37,15 @@ public class BasicDefinition {
         self.name = name
     }
 
-    public var sqlName: String {
+    public var nameSql: String {
         "\"\(name)\""
     }
 }
 
 public func createSql(_ d: Definition) -> String {
-    "CREATE \(d.definitionType) \(d.sqlName)"
+    "CREATE \(d.definitionType) \(d.nameSql)"
 }
 
 public func dropSql(_ d: Definition) -> String {
-    "DROP \(d.definitionType) \(d.sqlName)"
+    "DROP \(d.definitionType) \(d.nameSql)"
 }

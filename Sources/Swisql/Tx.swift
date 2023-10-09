@@ -5,6 +5,7 @@ public protocol Encodable: PostgresDynamicTypeEncodable, Equatable {
 
 public enum DatabaseError: Error {
     case noRows
+    case missingKey(Column)
 }
 
 public class Tx: ValueStore {
@@ -15,6 +16,14 @@ public class Tx: ValueStore {
     }
 
     public func exec(_ sql: String, _ params: [any Encodable] = []) async throws {
+        let psql = convertParams(sql)
+        print("\(psql)\n")
+        var bs = PostgresBindings()
+        for p in params { bs.append(p) }
+        try await cx.connection!.query(PostgresQuery(unsafeSQL: psql, binds: bs), logger: cx.log)
+    }
+
+    public func query(_ sql: String, _ params: [any Encodable] = []) async throws {
         let psql = convertParams(sql)
         print("\(psql)\n")
         var bs = PostgresBindings()

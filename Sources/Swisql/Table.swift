@@ -41,7 +41,7 @@ public class Table: BasicDefinition, Definition {
         let cvs = _columns.map({($0, rec[$0])}).filter({$0.1 != nil})
 
         let sql = """
-          INSERT INTO \(sqlName) (\(cvs.map({$0.0}).sql))
+          INSERT INTO \(nameSql) (\(cvs.map({$0.0}).sql))
           VALUES (\(cvs.map({$0.0.paramSql}).joined(separator: ", ")))
           """
 
@@ -54,14 +54,16 @@ public class Table: BasicDefinition, Definition {
         var wcs: [Condition] = []
 
         for c in primaryKey.columns {
-            wcs.append(unsafeEqual(c, (tx[rec, c] ?? rec[c])!))
+            let v = tx[rec, c] ?? rec[c]
+            if v == nil { throw DatabaseError.missingKey(c) }
+            wcs.append(c == v!)
         }
         
         let w = foldAnd(wcs)
         
         let sql = """
-          UPDATE \(sqlName)
-          SET \(cvs.map({"\($0.0.sqlName) = \($0.0.paramSql)"}).joined(separator: ", "))
+          UPDATE \(nameSql)
+          SET \(cvs.map({"\($0.0.nameSql) = \($0.0.paramSql)"}).joined(separator: ", "))
           WHERE \(w.sql)
           """
 

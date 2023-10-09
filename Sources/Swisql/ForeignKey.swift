@@ -36,7 +36,7 @@ public class ForeignKey: BasicConstraint, Constraint {
     }
 
     public var createSql: String {
-        "\(Swisql.createSql(self)) REFERENCES \(foreignTable.sqlName) (\(foreignColumns.sql)) " +
+        "\(Swisql.createSql(self)) REFERENCES \(foreignTable.nameSql) (\(foreignColumns.sql)) " +
           "ON UPDATE \(onUpdate.rawValue) ON DELETE \(onDelete.rawValue)"
     }
 

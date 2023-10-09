@@ -12,9 +12,9 @@ public class BasicTableDefinition: BasicDefinition {
 }
 
 public func createSql(_ d: TableDefinition) -> String {
-    "ALTER TABLE \(d.table.sqlName) ADD \(d.definitionType) \(d.sqlName)"
+    "ALTER TABLE \(d.table.nameSql) ADD \(d.definitionType) \(d.nameSql)"
 }
 
 public func dropSql(_ d: TableDefinition) -> String {
-    "ALTER TABLE \(d.table.sqlName) DROP \(d.definitionType) \(d.sqlName)"
+    "ALTER TABLE \(d.table.nameSql) DROP \(d.definitionType) \(d.nameSql)"
 }

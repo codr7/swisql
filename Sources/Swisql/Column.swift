@@ -1,14 +1,40 @@
 import Foundation
 import PostgresNIO
 
-public protocol Column: TableDefinition {
+public protocol SqlValue {
+    var paramSql: String {get}
+    var valueSql: String {get}
+    var valueParams: [any Encodable] {get}
+    func encode(_ val: Any) -> any Encodable
+}
+
+extension SqlValue {
+    public var paramSql: String {
+        "?"
+    }
+    
+    public var valueParams: [any Encodable] {
+        []
+    }
+    
+    public func encode(_ val: Any) -> any Encodable {
+        val as! any Encodable
+    }
+}
+
+extension [any SqlValue] {
+    var sql: String {
+        self.map({$0.valueSql}).joined(separator: ", ")
+    }
+}
+
+public protocol Column: SqlValue, TableDefinition {
     var columnType: String {get}
     var id: ObjectIdentifier {get}
     var nullable: Bool {get}
-    var paramSql: String {get}
     var primaryKey: Bool {get}
+    
     func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column
-    func encode(_ value: Any) -> any Encodable
     func equal(_ left: Any, _ right: Any) -> Bool
 }
 
@@ -55,12 +81,12 @@ public class BasicColumn<T: Equatable>: BasicTableDefinition {
     }
 }
 
-public func ==<T: Encodable>(_ col: BasicColumn<T>, _ val: T) -> Condition {
-    unsafeEqual(col as! any Column, val)
+public func ==<T: Encodable>(_ left: BasicColumn<T>, _ right: T) -> Condition {
+    left as! any SqlValue == right
 }
 
-public func unsafeEqual(_ col: Column, _ val: Any) -> Condition {
-    Condition("\(col.sqlName) = \(col.paramSql)", [col.encode(val)])
+public func ==(_ left: SqlValue, _ right: Any) -> Condition {
+    Condition("\(left.valueSql) = \(left.paramSql)", [left.encode(right)])
 }
 
 public extension Column {
@@ -72,6 +98,14 @@ public extension Column {
 
     var dropSql: String {
         Swisql.dropSql(self)
+    }
+
+    var valueSql: String {
+        "\(table.nameSql).\(nameSql)"
+    }
+    
+    var valueParams: [any Encodable] {
+        []
     }
 }
 
@@ -128,7 +162,7 @@ public class EnumColumn<T: Enum>: BasicColumn<T>, Column where T.RawValue == Str
     }
 
     public override var paramSql: String {
-        "?::\(type.sqlName)"
+        "?::\(type.nameSql)"
     }
     
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
@@ -196,6 +230,6 @@ public class StringColumn: BasicColumn<String>, Column {
 
 extension [any Column] {
     var sql: String {
-        self.map({$0.sqlName}).joined(separator: ", ")
+        self.map({$0.nameSql}).joined(separator: ", ")
     }
 }
