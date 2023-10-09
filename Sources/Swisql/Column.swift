@@ -8,7 +8,7 @@ public protocol Column: TableDefinition {
     var paramSql: String {get}
     var primaryKey: Bool {get}
     func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column
-    func encode(_ value: Any) -> PostgresDynamicTypeEncodable
+    func encode(_ value: Any) -> any Encodable
     func equal(_ left: Any, _ right: Any) -> Bool
 }
 
@@ -34,8 +34,8 @@ public class BasicColumn<T: Equatable>: BasicTableDefinition {
         "?"
     }
 
-    public func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
-        value as! PostgresDynamicTypeEncodable
+    public func encode(_ value: Any) -> any Encodable {
+        value as! any Encodable
     }
 
     public func equal(_ left: Any, _ right: Any) -> Bool {
@@ -55,6 +55,14 @@ public class BasicColumn<T: Equatable>: BasicTableDefinition {
     }
 }
 
+public func ==<T: Encodable>(_ col: BasicColumn<T>, _ val: T) -> Condition {
+    unsafeEqual(col as! any Column, val)
+}
+
+public func unsafeEqual(_ col: Column, _ val: Any) -> Condition {
+    Condition("\(col.sqlName) = \(col.paramSql)", [col.encode(val)])
+}
+
 public extension Column {
     var createSql: String {
         var sql = "\(Swisql.createSql(self as TableDefinition)) \(columnType)"
@@ -65,6 +73,9 @@ public extension Column {
     var dropSql: String {
         Swisql.dropSql(self)
     }
+}
+
+extension Bool: Encodable {
 }
 
 public class BoolColumn: BasicColumn<Bool>, Column {
@@ -81,6 +92,9 @@ public class BoolColumn: BasicColumn<Bool>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         BoolColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
+}
+
+extension Date: Encodable {
 }
 
 public class DateColumn: BasicColumn<Date>, Column {
@@ -129,7 +143,7 @@ public class EnumColumn<T: Enum>: BasicColumn<T>, Column where T.RawValue == Str
         try await tx.exec(self.createSql)
     }
 
-    public override func encode(_ value: Any) -> PostgresDynamicTypeEncodable {
+    public override func encode(_ value: Any) -> any Encodable {
         (value as! T).rawValue
     }
 
@@ -140,6 +154,9 @@ public class EnumColumn<T: Enum>: BasicColumn<T>, Column where T.RawValue == Str
             try await create(inTx: tx)
         }
     }
+}
+
+extension Int: Encodable {
 }
 
 public class IntColumn: BasicColumn<Int>, Column {
@@ -156,6 +173,9 @@ public class IntColumn: BasicColumn<Int>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
+}
+
+extension String: Encodable {
 }
 
 public class StringColumn: BasicColumn<String>, Column {

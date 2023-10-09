@@ -49,10 +49,30 @@ public class Table: BasicDefinition, Definition {
         for cv in cvs {tx[rec, cv.0] = cv.1}
     }
 
+    public func update(_ rec: Record, inTx tx: Tx) async throws {
+        let cvs = _columns.map({($0, rec[$0])}).filter({$0.1 != nil})
+        var wcs: [Condition] = []
+
+        for c in primaryKey.columns {
+            wcs.append(unsafeEqual(c, (tx[rec, c] ?? rec[c])!))
+        }
+        
+        let w = foldAnd(wcs)
+        
+        let sql = """
+          UPDATE \(sqlName)
+          SET \(cvs.map({"\($0.0.sqlName) = \($0.0.paramSql)"}).joined(separator: ", "))
+          WHERE \(w.sql)
+          """
+
+        try await tx.exec(sql, cvs.map({$0.0.encode($0.1!)}) + w.params)
+        for cv in cvs {tx[rec, cv.0] = cv.1}
+    }
+
     public func upsert(_ rec: Record, inTx tx: Tx) async throws {
         if rec.stored(_columns, inTx: tx) {
-            //try await table.update(rec, inTx: tx)
-        } else {
+             try await update(rec, inTx: tx)
+         } else {
             try await insert(rec, inTx: tx)
         }
     }    

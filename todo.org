@@ -1,7 +1,7 @@
-* implement Table.update
+* add queries
 * add Record ForeignKey subscript
+* add indexes
 * add sequences
-* add Query
 * add event sourcing support
 ** use pg triggers
 ** store all changes in events table
@@ -15,6 +15,26 @@ extension RepeatMode {
   static var once: Self { .times(1) }
   static var never: Self { .times(0) }
 }
+
+CREATE OR REPLACE FUNCTION data_change() RETURNS trigger AS
+$$
+    DECLARE
+        js jsonb;
+    BEGIN
+        SELECT to_jsonb(NEW.*) INTO js;
+        js := jsonb_set(js, '{dml_action}', to_jsonb(TG_OP));
+        js := jsonb_set(js, '{dml_table}', to_jsonb(TG_TABLE_NAME));
+        PERFORM (
+            SELECT pg_notify('people', js::text)
+        );
+        RETURN NEW;
+    END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE TRIGGER data_change_trigger
+    BEFORE INSERT OR UPDATE ON people
+    FOR EACH ROW
+        EXECUTE FUNCTION data_change();
 
 sudo -u postgres psql
 /usr/pgadmin4/bin/pgadmin4 &

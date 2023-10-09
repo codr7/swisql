@@ -1,6 +1,9 @@
 import PostgresNIO
 
-enum DatabaseError: Error {
+public protocol Encodable: PostgresDynamicTypeEncodable, Equatable {
+}
+
+public enum DatabaseError: Error {
     case noRows
 }
 
@@ -11,7 +14,7 @@ public class Tx: ValueStore {
         self.cx = cx
     }
 
-    public func exec(_ sql: String, _ params: [PostgresDynamicTypeEncodable] = []) async throws {
+    public func exec(_ sql: String, _ params: [any Encodable] = []) async throws {
         let psql = convertParams(sql)
         print("\(psql)\n")
         var bs = PostgresBindings()

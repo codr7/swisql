@@ -2,6 +2,15 @@ import Foundation
 import PostgresNIO
 import Swisql
 
+func conditionTests() {
+    let scm = Schema()
+    let tbl = Table(scm, "tbl")
+    let col = StringColumn("col", tbl)
+
+    let c = (col == "foo") || (col == "bar")
+    assert(c.sql == "(\(col.sqlName) = ?) OR (\(col.sqlName) = ?)")
+}
+
 func foreignKeyTests() async {
     let scm = Schema()
     let tbl1 = Table(scm, "tbl1")
@@ -106,11 +115,15 @@ func recordTests() async {
     assert(rec[intCol]! == 2)
     assert(rec.modified(tbl.columns, inTx: tx))
     try! await tbl.upsert(rec, inTx: tx)
+    assert(rec.stored(tbl.columns, inTx: tx))
+    assert(!rec.modified(tbl.columns, inTx: tx))
+
     try! await scm.drop(inTx: tx)
     try! await tx.commit()
     try! await cx.disconnect()
 }
 
+conditionTests()
 await foreignKeyTests()
 orderedSetTests()
 await recordTests()
