@@ -7,7 +7,7 @@ func conditionTests() {
     let tbl = Table(scm, "tbl")
     let col = StringColumn("col", tbl)
 
-    let c = (col == "foo") || (col == "bar")
+    let c = (col == "foo") || (col == 42)
     assert(c.sql == "(\(col.valueSql) = ?) OR (\(col.valueSql) = ?)")
 }
 

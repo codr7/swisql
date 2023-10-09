@@ -1,33 +1,6 @@
 import Foundation
 import PostgresNIO
 
-public protocol SqlValue {
-    var paramSql: String {get}
-    var valueSql: String {get}
-    var valueParams: [any Encodable] {get}
-    func encode(_ val: Any) -> any Encodable
-}
-
-extension SqlValue {
-    public var paramSql: String {
-        "?"
-    }
-    
-    public var valueParams: [any Encodable] {
-        []
-    }
-    
-    public func encode(_ val: Any) -> any Encodable {
-        val as! any Encodable
-    }
-}
-
-extension [any SqlValue] {
-    var sql: String {
-        self.map({$0.valueSql}).joined(separator: ", ")
-    }
-}
-
 public protocol Column: SqlValue, TableDefinition {
     var columnType: String {get}
     var id: ObjectIdentifier {get}
@@ -79,14 +52,6 @@ public class BasicColumn<T: Equatable>: BasicTableDefinition {
                                   )
                                   """)
     }
-}
-
-public func ==<T: Encodable>(_ left: BasicColumn<T>, _ right: T) -> Condition {
-    left as! any SqlValue == right
-}
-
-public func ==(_ left: SqlValue, _ right: Any) -> Condition {
-    Condition("\(left.valueSql) = \(left.paramSql)", [left.encode(right)])
 }
 
 public extension Column {
