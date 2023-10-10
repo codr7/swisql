@@ -1,7 +1,7 @@
 import Foundation
 import PostgresNIO
 
-public protocol Column: SqlValue, TableDefinition {
+public protocol Column: Value, TableDefinition {
     var columnType: String {get}
     var id: ObjectIdentifier {get}
     var nullable: Bool {get}

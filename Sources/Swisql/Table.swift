@@ -1,10 +1,11 @@
-public class Table: BasicDefinition, Definition {
+public class Table: BasicDefinition, Definition, Source {
     var definitions: [any TableDefinition] = []
     var _columns: [any Column] = []
     public var columns: [Column] { _columns }
     var foreignKeys: [ForeignKey] = []
     lazy var primaryKey: Key = Key("\(name)PrimaryKey", _columns.filter {$0.primaryKey})
-    
+    public var sourceSql: String { nameSql }
+
     public override init(_ schema: Schema, _ name: String) {
         super.init(schema, name)
         schema.definitions.append(self)
@@ -64,10 +65,10 @@ public class Table: BasicDefinition, Definition {
         let sql = """
           UPDATE \(nameSql)
           SET \(cvs.map({"\($0.0.nameSql) = \($0.0.paramSql)"}).joined(separator: ", "))
-          WHERE \(w.sql)
+          WHERE \(w.conditionSql)
           """
 
-        try await tx.exec(sql, cvs.map({$0.0.encode($0.1!)}) + w.params)
+        try await tx.exec(sql, cvs.map({$0.0.encode($0.1!)}) + w.conditionParams)
         for cv in cvs {tx[rec, cv.0] = cv.1}
     }
 

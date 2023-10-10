@@ -1,15 +1,21 @@
-public struct Condition {
-    public let sql: String
-    public let params: [any Encodable]
+public protocol Condition {
+    var conditionSql: String {get}
+    var conditionParams: [any Encodable] {get}
+}
+
+public struct BasicCondition: Condition {
+    public let conditionSql: String
+    public let conditionParams: [any Encodable]
 
     public init(_ sql: String, _ params: [any Encodable]) {
-        self.sql = sql
-        self.params = params
+        self.conditionSql = sql
+        self.conditionParams = params
     }
 }
 
 public func ||(_ left: Condition, _ right: Condition) -> Condition {
-    Condition("(\(left.sql)) OR (\(right.sql))", left.params + right.params)
+    BasicCondition("(\(left.conditionSql)) OR (\(right.conditionSql))",
+                   left.conditionParams + right.conditionParams)
 }
 
 public func foldOr(_ conds: [Condition]) -> Condition {
@@ -17,7 +23,8 @@ public func foldOr(_ conds: [Condition]) -> Condition {
 }
 
 public func &&(_ left: Condition, _ right: Condition) -> Condition {
-    Condition("(\(left.sql)) AND (\(right.sql))", left.params + right.params)
+    BasicCondition("(\(left.conditionSql)) AND (\(right.conditionSql))",
+                   left.conditionParams + right.conditionParams)
 }
 
 public func foldAnd(_ conds: [Condition]) -> Condition {

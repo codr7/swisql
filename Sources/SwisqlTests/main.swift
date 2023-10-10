@@ -8,7 +8,7 @@ func conditionTests() {
     let col = StringColumn("col", tbl)
 
     let c = (col == "foo") || (col == 42)
-    assert(c.sql == "(\(col.valueSql) = ?) OR (\(col.valueSql) = ?)")
+    assert(c.conditionSql == "(\(col.valueSql) = ?) OR (\(col.valueSql) = ?)")
 }
 
 func foreignKeyTests() async {
@@ -72,6 +72,7 @@ func queryTests() async {
 
     let q = Query()
     q.select(col1, col2)
+    q.from(tbl)
     q.filter(col1 == "foo")
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()

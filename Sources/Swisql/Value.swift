@@ -1,11 +1,11 @@
-public protocol SqlValue {
+public protocol Value {
     var paramSql: String {get}
     var valueSql: String {get}
     var valueParams: [any Encodable] {get}
     func encode(_ val: Any) -> any Encodable
 }
 
-extension SqlValue {
+extension Value {
     public var paramSql: String {
         "?"
     }
@@ -19,11 +19,11 @@ extension SqlValue {
     }
 }
 
-public func ==(_ left: SqlValue, _ right: Any) -> Condition {
-    Condition("\(left.valueSql) = \(left.paramSql)", [left.encode(right)])
+public func ==(_ left: Value, _ right: Any) -> Condition {
+    BasicCondition("\(left.valueSql) = \(left.paramSql)", [left.encode(right)])
 }
 
-extension [any SqlValue] {
+extension [any Value] {
     var sql: String {
         self.map({$0.valueSql}).joined(separator: ", ")
     }

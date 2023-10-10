@@ -1,8 +1,18 @@
-public class Query: SqlValue {
+public class Query: Condition, Value {
     var conditions: [Condition] = []
-    var values: [SqlValue] = []
+    var sources: [Source] = []
+    var values: [Value] = []
 
-    public init() {}
+    public init() {
+    }
+
+    public var conditionParams: [any Encodable] {
+        params
+    }
+
+    public var conditionSql: String {
+        sql
+    }
 
     public var params: [any Encodable] {
         var out: [any Encodable] = []
@@ -11,17 +21,29 @@ public class Query: SqlValue {
             out += v.valueParams
         }
         
+        for s in sources {
+            out += s.sourceParams
+        }
+
+        for c in conditions {
+            out += c.conditionParams
+        }
+
         return out
     }
 
     public var sql: String {
-        var out = "SELECT \(values.sql)"
+        var s = "SELECT \(values.sql)"
+
+        if !sources.isEmpty {
+            s += " FROM \(sources.sql)"
+        } 
 
         if !conditions.isEmpty {
-            out += " WHERE \(foldAnd(conditions).sql)"
+            s += " WHERE \(foldAnd(conditions).conditionSql)"
         }
         
-        return out
+        return s
     }
 
     public var valueParams: [any Encodable] {
@@ -36,11 +58,15 @@ public class Query: SqlValue {
         _ = try await tx.query(valueSql, valueParams)
     }
 
-    public func filter(_ conds: Condition...) {
-        for c in conds { conditions.append(c) }
+    public func filter(_ args: Condition...) {
+        for c in args { conditions.append(c) }
     }
 
-    public func select(_ vals: SqlValue...) {
-        for v in vals { values.append(v) }
+    public func from(_ args: Source...) {
+        for s in args { sources.append(s) }
+    }
+
+    public func select(_ args: Value...) {
+        for v in args { values.append(v) }
     }
 }
