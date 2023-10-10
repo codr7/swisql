@@ -3,11 +3,6 @@ import PostgresNIO
 public protocol Encodable: PostgresDynamicTypeEncodable, Equatable {
 }
 
-public enum DatabaseError: Error {
-    case noRows
-    case missingKey(Column)
-}
-
 public class Tx: ValueStore {
     let cx: Cx
 

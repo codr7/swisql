@@ -3,8 +3,7 @@ public class Query: Condition, Value {
     var sources: [Source] = []
     var values: [Value] = []
 
-    public init() {
-    }
+    public init() {}
 
     public var conditionParams: [any Encodable] {
         params
