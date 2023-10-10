@@ -8,6 +8,7 @@ Schemas keep track of standalone definitions such as tables, indexes, sequences 
 let scm = Schema()
 let tbl = Table(scm, "tbl")
 
+let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
 var tx = try! await cx.startTx()
 try! await scm.create(inTx: tx)
 try! await tx.commit()
@@ -21,6 +22,7 @@ let scm = Schema()
 let tbl = Table(scm, "tbl1")
 let col = IntColumn("col", tbl, primaryKey: true)
 
+let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
 var tx = try! await cx.startTx()
 try! await tbl.create(inTx: tx)
 try! await tx.commit()
@@ -31,6 +33,7 @@ Foreign keys create the required columns in their tables automatically by defaul
 
 ```
 let scm = Schema()
+
 let tbl1 = Table(scm, "tbl1")
 let col = IntColumn("col", tbl1, primaryKey: true)
 
@@ -46,8 +49,8 @@ Subscripting using typed columns accepts and returns the correct type.
 let scm = Schema()
 let tbl = Table(scm, "tbl")
 let col = StringColumn("col", tbl, primaryKey: true)
-let rec = Record()
 
+let rec = Record()
 rec[col] = "foo"
 assert(rec[col]! == "foo")
 ```
@@ -76,7 +79,16 @@ enum TestEnum: String, Enum {
 let scm = Schema()
 let tbl = Table(scm, "tbl")
 let col = EnumColumn<TestEnum>("col", tbl, primaryKey: true)
-let rec = Record()
+```
 
+The enum type is created automatically with the column if it doesn't already exist, but needs to be committed before it can be used.
+
+```
+let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
+let tx = try! await cx.startTx()
+try! await scm.create(inTx: tx)
+try! await tx.commit()
+
+let rec = Record()
 rec[enumCol] = .foo
 ```
