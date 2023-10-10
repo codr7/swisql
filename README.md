@@ -61,8 +61,15 @@ The status of each field is tracked in the current context/transaction.
 tx = try! await cx.startTx()
 assert(!rec.stored([col], inTx: tx))
 assert(rec.modified([col], inTx: tx))
-try! await tbl.upsert(rec, inTx: tx)
+
+try! await tbl.insert(rec, inTx: tx)
 assert(rec.stored([col], inTx: tx))
+assert(!rec.modified([col], inTx: tx))
+
+rec[col] = "bar"
+assert(rec.modified([col], inTx: tx))
+
+try! await tbl.update(rec, inTx: tx)
 assert(!rec.modified([col], inTx: tx))
 ```
 
@@ -85,10 +92,12 @@ The enum type is created automatically with the column if it doesn't already exi
 
 ```
 let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
-let tx = try! await cx.startTx()
+var tx = try! await cx.startTx()
 try! await scm.create(inTx: tx)
 try! await tx.commit()
 
 let rec = Record()
 rec[enumCol] = .foo
+tx = try! await cx.startTx()
+try! await tbl.insert(rec, inTx: tx)
 ```
