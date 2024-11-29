@@ -7,7 +7,6 @@
 *** fetch(inout record)
 * add models
 ** hostr
-* add event sourcing support
 
 enum RepeatMode {
   case times(Int)
