@@ -30,7 +30,7 @@ public class ForeignKey: BasicConstraint, Constraint {
         table.definitions.append(self)
         table.foreignKeys.append(self)
     }
-    
+
     public var constraintType: String {
         "FOREIGN KEY"
     }

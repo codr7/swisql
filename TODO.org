@@ -1,12 +1,13 @@
+* add nested transaction support
+** hostr
+* add indexes
+* add sequences
 * finish Query
 ** add result functionality
 *** fetch(inout record)
-* add Record ForeignKey subscript
-* add indexes
-* add sequences
+* add models
+** hostr
 * add event sourcing support
-** use pg triggers
-** store all changes in events table
 
 enum RepeatMode {
   case times(Int)

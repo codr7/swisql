@@ -20,13 +20,9 @@ public class Record {
         _fields.count
     }
 
-    public subscript<T, C>(column: C) -> T? where C:BasicColumn<T>, C: Column {
+    public subscript<T>(column: BasicColumn<T> & Column) -> T? {
         get {
-            if let f = _fields[column] {
-                return f.1 as? T
-            }
-
-            return nil
+            if let f = _fields[column] { (f.1 as! T) } else { nil }
         }
         set(value) {
             if value == nil {
@@ -37,19 +33,34 @@ public class Record {
         }
     }
 
-    public subscript(column: Column) -> Any? {
+    public subscript(column: any Column) -> Any? {
         get {
-            if let f = _fields[column] {
-                return f.1
-            }
-
-            return nil
+            if let f = _fields[column] { f.1 } else { nil }
         }
         set(value) {
             if value == nil {
                 _fields[column] = nil
             } else {
                 _fields[column] = (column, value!)
+            }
+        }
+    }
+
+    public subscript(key: ForeignKey) -> Record {
+        get {
+            let result = Record()
+            
+            for i in 0..<key.columns.count {
+                if let v = _fields[key.columns[i]] {
+                    result[key.foreignColumns[i]] = v
+                }
+            }
+
+            return result
+        }
+        set(source) {
+            for i in 0..<key.columns.count {
+                _fields[key.columns[i]] = source._fields[key.foreignColumns[i]]
             }
         }
     }

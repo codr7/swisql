@@ -98,7 +98,7 @@ public class DateColumn: BasicColumn<Date>, Column {
     }
 
     public var columnType: String {
-        "TIMESTAMP"
+        "TIMESTAMPTZ"
     }
 
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
