@@ -1,7 +1,6 @@
 import PostgresNIO
 
-public protocol Encodable: PostgresDynamicTypeEncodable, Equatable {
-}
+public typealias Encodable = PostgresDynamicTypeEncodable & Equatable
 
 public class Tx: ValueStore {
     let cx: Cx

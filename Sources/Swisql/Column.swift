@@ -74,9 +74,6 @@ public extension Column {
     }
 }
 
-extension Bool: Encodable {
-}
-
 public class BoolColumn: BasicColumn<Bool>, Column {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
@@ -91,9 +88,6 @@ public class BoolColumn: BasicColumn<Bool>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         BoolColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-}
-
-extension Date: Encodable {
 }
 
 public class DateColumn: BasicColumn<Date>, Column {
@@ -155,9 +149,6 @@ public class EnumColumn<T: Enum>: BasicColumn<T>, Column where T.RawValue == Str
     }
 }
 
-extension Int: Encodable {
-}
-
 public class IntColumn: BasicColumn<Int>, Column {
     public override init(_ name: String, _ table: Table, nullable: Bool = false, primaryKey: Bool = false) {
         super.init(name, table, nullable: nullable, primaryKey: primaryKey)
@@ -172,9 +163,6 @@ public class IntColumn: BasicColumn<Int>, Column {
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
     }
-}
-
-extension String: Encodable {
 }
 
 public class StringColumn: BasicColumn<String>, Column {
