@@ -53,7 +53,7 @@ public class Query: Condition, Value {
         sql
     }
 
-    public func exec(inTx tx: Tx) async throws {
+    public func exec(_ tx: Tx) async throws {
         _ = try await tx.query(valueSql, valueParams)
     }
 

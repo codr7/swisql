@@ -23,13 +23,13 @@ public class Table: BasicDefinition, Definition, Source {
          Swisql.dropSql(self)
      }
 
-    public func create(inTx tx: Tx) async throws {
+    public func create(_ tx: Tx) async throws {
         try await tx.exec(createSql)
         _ = primaryKey
-        for d in definitions {try await d.create(inTx: tx)}
+        for d in definitions {try await d.create(tx)}
     }
 
-    public func exists(inTx tx: Tx) async throws -> Bool {
+    public func exists(_ tx: Tx) async throws -> Bool {
         try await tx.queryValue("""
                                   SELECT EXISTS (
                                     SELECT FROM pg_tables
@@ -38,7 +38,7 @@ public class Table: BasicDefinition, Definition, Source {
                                   """)
     }
 
-    public func insert(_ rec: Record, inTx tx: Tx) async throws {
+    public func insert(_ rec: Record, _ tx: Tx) async throws {
         let cvs = _columns.map({($0, rec[$0])}).filter({$0.1 != nil})
 
         let sql = """
@@ -50,7 +50,7 @@ public class Table: BasicDefinition, Definition, Source {
         for cv in cvs {tx[rec, cv.0] = cv.1}
     }
 
-    public func update(_ rec: Record, inTx tx: Tx) async throws {
+    public func update(_ rec: Record, _ tx: Tx) async throws {
         let cvs = _columns.map({($0, rec[$0])}).filter({$0.1 != nil})
         var wcs: [Condition] = []
 
@@ -72,21 +72,16 @@ public class Table: BasicDefinition, Definition, Source {
         for cv in cvs {tx[rec, cv.0] = cv.1}
     }
 
-    public func upsert(_ rec: Record, inTx tx: Tx) async throws {
-        if rec.stored(_columns, inTx: tx) {
-             try await update(rec, inTx: tx)
-         } else {
-            try await insert(rec, inTx: tx)
-        }
-    }    
+    public func upsert(_ rec: Record, _ tx: Tx) async throws {
+        if rec.stored(_columns, tx) { try await update(rec, tx) }
+        else { try await insert(rec, tx) }
+    }
 
-    public func sync(inTx tx: Tx) async throws {
-        if (try await exists(inTx: tx)) {
-            for d in definitions {
-                try await d.sync(inTx: tx)
-            }
+    public func sync(_ tx: Tx) async throws {
+        if (try await exists(tx)) {
+            for d in definitions { try await d.sync(tx) }
         } else {
-            try await create(inTx: tx)
+            try await create(tx)
         }
     }
 }

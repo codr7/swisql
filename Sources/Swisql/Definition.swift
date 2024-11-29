@@ -6,24 +6,24 @@ public protocol Definition {
     var schema: Schema {get}
     var nameSql: String {get}
     
-    func create(inTx: Tx) async throws
-    func drop(inTx: Tx) async throws
-    func sync(inTx: Tx) async throws
-    func exists(inTx: Tx) async throws -> Bool
+    func create(_ tx: Tx) async throws
+    func drop(_ tx: Tx) async throws
+    func sync(_ tx: Tx) async throws
+    func exists(_ tx: Tx) async throws -> Bool
 }
 
 public extension Definition {
-    func create(inTx tx: Tx) async throws {
+    func create(_ tx: Tx) async throws {
         try await tx.exec(self.createSql)
     }
 
-    func drop(inTx tx: Tx) async throws {
+    func drop(_ tx: Tx) async throws {
         try await tx.exec(self.dropSql)
     }
 
-    func sync(inTx tx: Tx) async throws {
-        if !(try await exists(inTx: tx)) {
-            try await create(inTx: tx)
+    func sync(_ tx: Tx) async throws {
+        if !(try await exists(tx)) {
+            try await create(tx)
         }
     }
 }

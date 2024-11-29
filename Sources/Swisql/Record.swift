@@ -65,7 +65,7 @@ public class Record {
         }
     }
 
-    public func modified(_ columns: [Column], inTx tx: Tx) -> Bool {
+    public func modified(_ columns: [Column], _ tx: Tx) -> Bool {
         for c in columns {
             let l = self[c]
             let r = tx[self, c]
@@ -76,7 +76,7 @@ public class Record {
         return false
     }
 
-    public func stored(_ columns: [Column], inTx tx: Tx) -> Bool {
+    public func stored(_ columns: [Column], _ tx: Tx) -> Bool {
         for c in columns {
             if tx[self, c] != nil {
                 return true

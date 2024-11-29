@@ -1,3 +1,4 @@
+* remove inTx
 * add nested transaction support
 ** hostr
 * add indexes
@@ -24,3 +25,6 @@ GRANT ALL PRIVILEGES ON DATABASE swisql TO swisql;
 
 sudo -u postgres psql
 /usr/pgadmin4/bin/pgadmin4 &
+
+Sweets
+sub paths in Sources

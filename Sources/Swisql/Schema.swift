@@ -4,21 +4,21 @@ public class Schema {
     public init() {
     }
     
-    public func create(inTx tx: Tx) async throws {
+    public func create(_ tx: Tx) async throws {
         for d in definitions {
-            try await d.create(inTx: tx)
+            try await d.create(tx)
         }
     }
     
-    public func drop(inTx tx: Tx) async throws {
+    public func drop(_ tx: Tx) async throws {
         for d in definitions {
-            try await d.drop(inTx: tx)
+            try await d.drop(tx)
         }
     }
     
-    public func sync(inTx tx: Tx) async throws {
+    public func sync(_ tx: Tx) async throws {
         for d in definitions {
-            try await d.sync(inTx: tx)
+            try await d.sync(tx)
         }
     }
 }

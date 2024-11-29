@@ -23,7 +23,7 @@ public class BasicConstraint: BasicTableDefinition {
         "CONSTRAINT"
     }
 
-    public func exists(inTx tx: Tx) async throws -> Bool {
+    public func exists(_ tx: Tx) async throws -> Bool {
         try await tx.queryValue("""
                                   SELECT EXISTS (
                                     SELECT constraint_name 

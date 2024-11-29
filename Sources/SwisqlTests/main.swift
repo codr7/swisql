@@ -23,11 +23,11 @@ func foreignKeyTests() async {
     try! await cx.connect()
 
     var tx = try! await cx.startTx()
-    try! await scm.create(inTx: tx)
+    try! await scm.create(tx)
     try! await tx.rollback()
 
     tx = try! await cx.startTx()
-    try! await scm.sync(inTx: tx)
+    try! await scm.sync(tx)
     try! await tx.rollback()
     
     try! await cx.disconnect()
@@ -35,15 +35,10 @@ func foreignKeyTests() async {
 
 func orderedSetTests() {
     func compareInts(l: Int, r: Int) -> Order {
-        if l < r {
-            return .less
-        }
-
-        if l > r {
-            return .greater
-        }
-
-        return .equal
+        return
+          if l < r { .less }
+          else if l > r { .greater }
+          else { .equal }
     }
 
     var s = OrderedSet<Int, Int>(compare)
@@ -77,8 +72,8 @@ func queryTests() async {
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()
     let tx = try! await cx.startTx()
-    try! await scm.sync(inTx: tx)
-    try! await q.exec(inTx: tx)
+    try! await scm.sync(tx)
+    try! await q.exec(tx)
     try! await cx.disconnect()
 }
 
@@ -93,6 +88,7 @@ func recordTests() async {
     let tbl = Table(scm, "tbl")
     let boolCol = BoolColumn("bool", tbl)
     let dateCol = DateColumn("date", tbl)
+    let decimalCol = DecimalColumn("decimal", tbl)
     let enumCol = EnumColumn<TestEnum>("enum", tbl)
     let intCol = IntColumn("int", tbl, primaryKey: true)
     let stringCol = StringColumn("string", tbl)
@@ -105,6 +101,10 @@ func recordTests() async {
     rec[dateCol] = now
     assert(rec[dateCol]! == now)
 
+    let d = Decimal(4.2)
+    rec[decimalCol] = d 
+    assert(rec[decimalCol] == d)
+             
     rec[enumCol] = .foo
     assert(rec[enumCol]! == .foo)
 
@@ -114,29 +114,29 @@ func recordTests() async {
     rec[stringCol] = "foo"
     assert(rec[stringCol]! == "foo")
     
-    assert(rec.count == 5)
+    assert(rec.count == 6)
     
     let cx = Cx(database: "swisql", user: "swisql", password: "swisql")
     try! await cx.connect()
     var tx = try! await cx.startTx()
-    try! await scm.sync(inTx: tx)
+    try! await scm.sync(tx)
     try! await tx.commit()
     tx = try! await cx.startTx()
 
-    assert(!rec.stored(tbl.columns, inTx: tx))
-    assert(rec.modified(tbl.columns, inTx: tx))
-    try! await tbl.upsert(rec, inTx: tx)
-    assert(rec.stored(tbl.columns, inTx: tx))
-    assert(!rec.modified(tbl.columns, inTx: tx))
+    assert(!rec.stored(tbl.columns, tx))
+    assert(rec.modified(tbl.columns, tx))
+    try! await tbl.upsert(rec, tx)
+    assert(rec.stored(tbl.columns, tx))
+    assert(!rec.modified(tbl.columns, tx))
 
     rec[intCol] = 2
     assert(rec[intCol]! == 2)
-    assert(rec.modified(tbl.columns, inTx: tx))
-    try! await tbl.upsert(rec, inTx: tx)
-    assert(rec.stored(tbl.columns, inTx: tx))
-    assert(!rec.modified(tbl.columns, inTx: tx))
+    assert(rec.modified(tbl.columns, tx))
+    try! await tbl.upsert(rec, tx)
+    assert(rec.stored(tbl.columns, tx))
+    assert(!rec.modified(tbl.columns, tx))
 
-    try! await scm.drop(inTx: tx)
+    try! await scm.drop(tx)
     try! await tx.commit()
     try! await cx.disconnect()
 }

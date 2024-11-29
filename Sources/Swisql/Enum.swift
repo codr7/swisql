@@ -20,15 +20,15 @@ public class EnumType<T: Enum>: BasicDefinition, Definition {
         Swisql.dropSql(self)
     }
     
-    public func create(inTx tx: Tx) async throws {
+    public func create(_ tx: Tx) async throws {
         try await tx.exec(self.createSql)
 
         for m in T.allCases {
-            try await EnumMember(self, m.rawValue).create(inTx: tx)
+            try await EnumMember(self, m.rawValue).create(tx)
         }
     }
 
-    public func exists(inTx tx: Tx) async throws -> Bool {
+    public func exists(_ tx: Tx) async throws -> Bool {
         try await tx.queryValue("""
                                   SELECT EXISTS (
                                     SELECT FROM pg_type
@@ -37,13 +37,13 @@ public class EnumType<T: Enum>: BasicDefinition, Definition {
                                   """)
     }    
 
-    public func sync(inTx tx: Tx) async throws {        
-        if (try await exists(inTx: tx)) {
+    public func sync(_ tx: Tx) async throws {        
+        if (try await exists(tx)) {
             for m in T.allCases {
-                try await EnumMember<T>(self, m.rawValue).sync(inTx: tx)
+                try await EnumMember<T>(self, m.rawValue).sync(tx)
             }
         } else {
-            try await create(inTx: tx)
+            try await create(tx)
         }
     }
 }
@@ -68,7 +68,7 @@ public class EnumMember<T: Enum>: BasicDefinition, Definition {
         "ALTER TYPE \(type.nameSql) DROP VALUE '\(name)'"
     }
 
-    public func exists(inTx tx: Tx) async throws -> Bool {
+    public func exists(_ tx: Tx) async throws -> Bool {
         try await tx.queryValue("""
                                   SELECT EXISTS (
                                     SELECT
