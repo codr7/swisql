@@ -23,17 +23,13 @@ public class BasicColumn<T: Equatable>: BasicTableDefinition {
         super.init(name, table)
     }
     
-    public var definitionType: String {
-       "COLUMN"
-    }
+    public var definitionType = "COLUMN"
     
     public var id: ObjectIdentifier {
         ObjectIdentifier(self)
     }
 
-    public var paramSql: String {
-        "?"
-    }
+    public var paramSql: String { "?" }
 
     public func encode(_ value: Any) -> any Encodable {
         value as! any Encodable
@@ -63,17 +59,9 @@ public extension Column {
         return sql
     }
 
-    var dropSql: String {
-        Swisql.dropSql(self)
-    }
-
-    var valueSql: String {
-        "\(table.nameSql).\(nameSql)"
-    }
-    
-    var valueParams: [any Encodable] {
-        []
-    }
+    var dropSql: String { Swisql.dropSql(self) }
+    var valueSql: String { "\(table.nameSql).\(nameSql)" }
+    var valueParams: [any Encodable] { [] }
 }
 
 public class BoolColumn: BasicColumn<Bool>, Column {
@@ -84,9 +72,7 @@ public class BoolColumn: BasicColumn<Bool>, Column {
         table._columns.append(self)
     }
     
-    public var columnType: String {
-        "BOOLEAN"
-    }
+    public var columnType = "BOOLEAN"
 
     public func clone(_ name: String, _ table: Table,
                       nullable: Bool, primaryKey: Bool) -> Column {
@@ -102,9 +88,7 @@ public class DateColumn: BasicColumn<Date>, Column {
         table._columns.append(self)
     }
 
-    public var columnType: String {
-        "TIMESTAMPTZ"
-    }
+    public var columnType = "TIMESTAMPTZ"
 
     public func clone(_ name: String, _ table: Table,
                       nullable: Bool, primaryKey: Bool) -> Column {
@@ -182,9 +166,7 @@ public class IntColumn: BasicColumn<Int>, Column {
         table._columns.append(self)
     }
 
-    public var columnType: String {
-        "INTEGER"
-    }
+    public var columnType = "INTEGER"
 
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool) -> Column {
         IntColumn(name, table, nullable: nullable, primaryKey: primaryKey)
@@ -198,7 +180,7 @@ public class StringColumn: BasicColumn<String>, Column {
         table._columns.append(self)
     }
 
-    public var columnType: String { "TEXT" }
+    public var columnType = "TEXT"
 
     public func clone(_ name: String, _ table: Table, nullable: Bool, primaryKey: Bool ) -> Column {
         StringColumn(name, table, nullable: nullable, primaryKey: primaryKey)
